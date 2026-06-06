@@ -200,65 +200,65 @@ function runBufferTitrationEngine() {
     const pKa = parseFloat(document.getElementById('titrationBuffer').value);
     const baseEquiv = parseFloat(document.getElementById('titrationBase').value);
     const outBox = document.getElementById('titrationResultBox');
+    if (isNaN(baseEquiv) || baseEquiv <= 0 || baseEquiv >= 1) { alert("Please enter a base equivalent value strictly between 0.01 and 0.99."); return; }
+    const pH = pKa + Math.log10(baseEquiv / (1 - baseEquiv));
+    const canvas = document.getElementById('titrationCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const leftMargin = 25, bottomMargin = 135, graphWidth = 260, graphHeight = 115;
+    ctx.beginPath(); ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.moveTo(leftMargin, 10); ctx.lineTo(leftMargin, bottomMargin); ctx.lineTo(leftMargin + graphWidth, bottomMargin); ctx.stroke();
+    ctx.beginPath(); ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2;
+    for (let x = leftMargin; x <= leftMargin + graphWidth; x++) {
+        let pct = (x - leftMargin) / graphWidth; if (pct < 0.01) pct = 0.01; if (pct > 0.99) pct = 0.99;
+        let currentPH = pKa + Math.log10(pct / (1 - pct)); let y = bottomMargin - (currentPH / 14) * graphHeight;
+        if (x === leftMargin) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    const dotX = leftMargin + baseEquiv * graphWidth; const dotY = bottomMargin - (pH / 14) * graphHeight;
+    ctx.beginPath(); ctx.fillStyle = '#06b6d4'; ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI); ctx.fill();
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">EQUILIBRIUM TITRATION MATRIX REPORT:</strong><br>-----------------------------------<br>• System settings: pKa reference value = ${pKa}<br>• Base Load ratio: ${baseEquiv} equivalents added<br><br>• Calculated Solution State: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">pH = ${pH.toFixed(2)}</span>`;
+}
 
-    if (isNaN(baseEquiv) || baseEquiv <= 0 || baseEquiv >= 1) {
-        alert("Please enter a base equivalent value strictly between 0.01 and 0.99.");
+// --- TOOL #14 ENGINE ---
+function runRestrictionMapperEngine() {
+    const motif = document.getElementById('enzymeRestrictionSelect').value;
+    const rawDna = document.getElementById('restrictionDnaInput').value.toUpperCase().trim().replace(/[^ATCG]/g, '');
+    const outBox = document.getElementById('restrictionResultBox');
+
+    if (!rawDna) {
+        alert("Please paste a valid sequence of A, T, C, G DNA bases first.");
         return;
     }
 
-    // Solve pH via Henderson-Hasselbalch equation
-    const pH = pKa + Math.log10(baseEquiv / (1 - baseEquiv));
+    let cutIndices = [];
+    let searchIndex = 0;
 
-    // Render Canvas Titration Sigmoid Curve lines
-    const canvas = document.getElementById('titrationCanvas');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const leftMargin = 25, bottomMargin = 135, graphWidth = 260, graphHeight = 115;
-
-    // Draw axis lines
-    ctx.beginPath();
-    ctx.strokeStyle = '#1e293b';
-    ctx.lineWidth = 1;
-    ctx.moveTo(leftMargin, 10);
-    ctx.lineTo(leftMargin, bottomMargin);
-    ctx.lineTo(leftMargin + graphWidth, bottomMargin);
-    ctx.stroke();
-
-    // Plot full mathematical trajectory curve loop
-    ctx.beginPath();
-    ctx.strokeStyle = '#00ff88';
-    ctx.lineWidth = 2;
-
-    for (let x = leftMargin; x <= leftMargin + graphWidth; x++) {
-        let pct = (x - leftMargin) / graphWidth;
-        if (pct < 0.01) pct = 0.01;
-        if (pct > 0.99) pct = 0.99;
-        
-        let currentPH = pKa + Math.log10(pct / (1 - pct));
-        // Map pH metrics scale (0 to 14) onto the graph layout grid height
-        let y = bottomMargin - (currentPH / 14) * graphHeight;
-
-        if (x === leftMargin) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+    // Scan sequence locations sequentially for palindromic matches
+    while ((searchIndex = rawDna.indexOf(motif, searchIndex)) !== -1) {
+        // Map realistic biological cuts immediately inside the first sequence block
+        cutIndices.push(searchIndex + 1);
+        searchIndex += 1; 
     }
-    ctx.stroke();
 
-    // Plot real-time configuration dot tracking intersection node
-    const dotX = leftMargin + baseEquiv * graphWidth;
-    const dotY = bottomMargin - (pH / 14) * graphHeight;
+    // Process piece calculations by segmenting sequence intervals
+    let fragments = [];
+    let lastCut = 0;
 
-    ctx.beginPath();
-    ctx.fillStyle = '#06b6d4';
-    ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI);
-    ctx.fill();
+    cutIndices.forEach(cut => {
+        fragments.push(rawDna.substring(lastCut, cut));
+        lastCut = cut;
+    });
+    fragments.push(rawDna.substring(lastCut)); // Capture tail piece
+
+    const fragmentLengths = fragments.map(f => f.length);
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">EQUILIBRIUM TITRATION MATRIX REPORT:</strong><br>
+        <strong style="color: #00ff88;">RESTRICTION MAPPING REPORT:</strong><br>
         -----------------------------------<br>
-        • System settings: pKa reference value = ${pKa}<br>
-        • Base Load ratio: ${baseEquiv} equivalents added<br><br>
-        • Calculated Solution State: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">pH = ${pH.toFixed(2)}</span>
+        • Active Target Motif: <span style="color: #06b6d4; font-family: monospace;">${motif}</span><br>
+        • Total Cleavage Sites Found: ${cutIndices.length}<br>
+        • Cleavage Slice Coordinates: [ ${cutIndices.length ? cutIndices.join(', ') : 'None'} ]<br><br>
+        • Generated Fragment Count: <span style="color: #00ff88; font-weight: bold;">${fragments.length}</span><br>
+        • Sliced Fragment Base Lengths: <span style="color: #06b6d4; font-family: monospace;">${fragmentLengths.join(' bp, ')} bp</span>
     `;
 }
