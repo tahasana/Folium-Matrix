@@ -247,49 +247,100 @@ function runRestrictionMapperEngine() {
 function runTrypsinDigestEngine() {
     const rawProtein = document.getElementById('trypsinProteinInput').value.toUpperCase().trim().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g, '');
     const outBox = document.getElementById('trypsinResultBox');
+    if (!rawProtein) { alert("Please paste an amino acid protein sequence string first."); return; }
+    const residueMasses = { 'A':71.08, 'R':156.19, 'N':114.10, 'D':115.09, 'C':103.14, 'Q':128.13, 'E':129.12, 'G':57.05, 'H':137.14, 'I':113.16, 'L':113.16, 'K':128.17, 'M':131.20, 'F':147.18, 'P':97.12, 'S':87.08, 'T':101.11, 'W':186.21, 'Y':163.18, 'V':99.13 };
+    let fragments = []; let currentFragment = "";
+    for (let i = 0; i < rawProtein.length; i++) { const residue = rawProtein[i]; currentFragment += residue; if (residue === 'K' || residue === 'R') { fragments.push(currentFragment); currentFragment = ""; } }
+    if (currentFragment) fragments.push(currentFragment);
+    let reportRows = "";
+    fragments.forEach((frag, idx) => { let massAccumulator = 18.02; for (let char of frag) { massAccumulator += (residueMasses[char] || 0); } reportRows += `• Frag #${idx + 1} [${frag}]: <span style="color: #00ff88; font-weight: bold;">${massAccumulator.toFixed(2)} u</span><br>`; });
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">TRYPSIN PROTEOLYTIC DIGEST REPORT:</strong><br>-----------------------------------<br>• Total Cleaved Peptides: ${fragments.length} pieces<br><br><strong>PEPTIDE MASS FINGERPRINT:</strong><br>${reportRows}`;
+}
 
-    if (!rawProtein) {
-        alert("Please paste an amino acid protein sequence string first.");
+// --- TOOL #16 ENGINE ---
+function calculatePeptideNetCharge(sequence, pH) {
+    // Standard baseline ionization constraints constant map
+    const pKaValues = { 'R':12.48, 'K':10.53, 'H':6.00, 'D':3.86, 'E':4.25, 'C':8.33, 'Y':10.07 };
+    let charge = 0;
+
+    // Terminal buffers ionization weights
+    charge += 1 / (1 + Math.pow(10, pH - 9.6));   // N-Terminus Positivity
+    charge -= 1 / (1 + Math.pow(10, 2.34 - pH));  // C-Terminus Negativity
+
+    // Traverse the inner string residues to compute electrical sums
+    for (let residue of sequence) {
+        if (['R', 'K', 'H'].includes(residue)) {
+            charge += 1 / (1 + Math.pow(10, pH - pKaValues[residue]));
+        } else if (['D', 'E', 'C', 'Y'].includes(residue)) {
+            charge -= 1 / (1 + Math.pow(10, pKaValues[residue] - pH));
+        }
+    }
+    return charge;
+}
+
+function runChargePlotterEngine() {
+    const rawPeptide = document.getElementById('chargePeptideInput').value.toUpperCase().trim().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g, '');
+    const outBox = document.getElementById('chargeResultBox');
+
+    if (!rawPeptide) {
+        alert("Please map a valid single-letter sequence matrix first.");
         return;
     }
 
-    // Lookup table matching precise residue mass calculations
-    const residueMasses = {
-        'A':71.08, 'R':156.19, 'N':114.10, 'D':115.09, 'C':103.14, 'Q':128.13, 'E':129.12, 
-        'G':57.05, 'H':137.14, 'I':113.16, 'L':113.16, 'K':128.17, 'M':131.20, 'F':147.18, 
-        'P':97.12, 'S':87.08, 'T':101.11, 'W':186.21, 'Y':163.18, 'V':99.13
-    };
-
-    let fragments = [];
-    let currentFragment = "";
-
-    // Parse the loop sequence to execute cleavage cuts immediately after R or K residues
-    for (let i = 0; i < rawProtein.length; i++) {
-        const residue = rawProtein[i];
-        currentFragment += residue;
-
-        if (residue === 'K' || residue === 'R') {
-            fragments.push(currentFragment);
-            currentFragment = "";
+    // 1. Calculate the Isoelectric Point (pI) using iterative root finding
+    let isoelectricPoint = 7.0;
+    for (let i = 0; i < 14; i += 0.005) {
+        if (Math.abs(calculatePeptideNetCharge(rawPeptide, i)) < Math.abs(calculatePeptideNetCharge(rawPeptide, isoelectricPoint))) {
+            isoelectricPoint = i;
         }
     }
-    if (currentFragment) fragments.push(currentFragment); // Append tail segment
 
-    let reportRows = "";
-    fragments.forEach((frag, idx) => {
-        // Calculate raw mass total and append standard +18.02 water mass block
-        let massAccumulator = 18.02;
-        for (let char of frag) { massAccumulator += (residueMasses[char] || 0); }
+    // 2. Render HTML5 Canvas coordinate lines
+    const canvas = document.getElementById('chargeCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        reportRows += `• Frag #${idx + 1} [${frag}]: <span style="color: #00ff88; font-weight: bold;">${massAccumulator.toFixed(2)} u</span><br>`;
-    });
+    const leftMargin = 25, bottomMargin = 75, graphWidth = 260, graphHeight = 65;
+
+    // Zero-axis balance baseline threshold line indicator
+    ctx.beginPath();
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1;
+    ctx.moveTo(leftMargin, bottomMargin);
+    ctx.lineTo(leftMargin + graphWidth, bottomMargin);
+    ctx.stroke();
+
+    // Trace charge trajectory curve lines loop
+    ctx.beginPath();
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 2;
+
+    for (let x = leftMargin; x <= leftMargin + graphWidth; x++) {
+        let currentPH = ((x - leftMargin) / graphWidth) * 14;
+        let calculatedNetCharge = calculatePeptideNetCharge(rawPeptide, currentPH);
+        
+        // Dynamic variable normalization mapping scale caps
+        let y = bottomMargin - (calculatedNetCharge / 5) * graphHeight;
+
+        if (x === leftMargin) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Plot tracking dot intersection lock node
+    const dotX = leftMargin + (isoelectricPoint / 14) * graphWidth;
+    ctx.beginPath();
+    ctx.fillStyle = '#06b6d4';
+    ctx.arc(dotX, bottomMargin, 4, 0, 2 * Math.PI);
+    ctx.fill();
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">TRYPSIN PROTEOLYTIC DIGEST REPORT:</strong><br>
+        <strong style="color: #00ff88;">BIOPHYSICAL CHARGE DYNAMICS REPORT:</strong><br>
         -----------------------------------<br>
-        • Total Cleaved Peptides: ${fragments.length} pieces<br><br>
-        <strong>PEPTIDE MASS FINGERPRINT:</strong><br>
-        ${reportRows}
+        • Net Charge at Neutrality State (pH 7.00): ${calculatePeptideNetCharge(rawPeptide, 7.0).toFixed(2)} e<br><br>
+        • Calculated Isoelectric Point: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">pI = ${isoelectricPoint.toFixed(2)}</span><br>
+        <small style="color: #94a3b8;">(The solution state where overall electrical balance reads exactly 0.00)</small>
     `;
 }
