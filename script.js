@@ -115,23 +115,44 @@ function runBeerLambertCalculator() {
     const extinction = parseFloat(document.getElementById('beerExtinction').value);
     const pathLength = parseFloat(document.getElementById('beerPathLength').value);
     const outBox = document.getElementById('beerResultBox');
+    if (isNaN(absorbance) || isNaN(extinction) || isNaN(pathLength) || absorbance <= 0 || extinction <= 0 || pathLength <= 0) { alert("Please enter valid positive numbers across all spectrophotometer scales."); return; }
+    const molarConcentration = absorbance / (extinction * pathLength);
+    const microMolar = molarConcentration * 1000000;
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">SPECTROSCOPY SCAN SPECTRUM LOGS:</strong><br>-----------------------------------<br>• Total Absorbed Light (A): ${absorbance}<br>• Extinction Coeff (ε): ${extinction} M⁻¹cm⁻¹<br><br>• Calculated Concentration Result: <br><span style="color: #00ff88; font-weight: bold; font-size: 16px;">${microMolar.toFixed(3)} μM</span> (Micromolar concentration)`;
+}
 
-    if (isNaN(absorbance) || isNaN(extinction) || isNaN(pathLength) || absorbance <= 0 || extinction <= 0 || pathLength <= 0) {
-        alert("Please enter valid positive numbers across all spectrophotometer scales.");
+// --- TOOL #9 ENGINE ---
+function runPurityRatioInspector() {
+    const a260 = parseFloat(document.getElementById('purityA260').value);
+    const a280 = parseFloat(document.getElementById('purityA280').value);
+    const outBox = document.getElementById('purityResultBox');
+
+    if (isNaN(a260) || isNaN(a280) || a260 <= 0 || a280 <= 0) {
+        alert("Please input accurate, positive optical density readings.");
         return;
     }
 
-    // Solve for Concentration: c = A / (e * l)
-    const molarConcentration = absorbance / (extinction * pathLength);
-    // Convert base Molar concentrations over to microMolar metrics (multiply by 1,000,000)
-    const microMolar = molarConcentration * 1000000;
+    // Calculate optical ratio
+    const ratio = a260 / a280;
+    let qualityDiagnostic = "";
+
+    // Evaluate sample purity classifications
+    if (ratio >= 1.75 && ratio <= 1.85) {
+        qualityDiagnostic = `<span style="color: #00ff88; font-weight: bold;">Pure DNA Extract Cleared.</span>`;
+    } else if (ratio >= 1.95 && ratio <= 2.05) {
+        qualityDiagnostic = `<span style="color: #00ff88; font-weight: bold;">Pure RNA Extract Cleared.</span>`;
+    } else if (ratio > 1.85 && ratio < 1.95) {
+        qualityDiagnostic = `<span style="color: #06b6d4; font-weight: bold;">Mixed Nucleic Extraction (DNA/RNA Equilibrium)</span>`;
+    } else {
+        qualityDiagnostic = `<span style="color: #ef4444; font-weight: bold;">⚠️ Contamination Detected: Impure sample matrix. Protein or organic residue detected.</span>`;
+    }
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">SPECTROSCOPY SCAN SPECTRUM LOGS:</strong><br>
+        <strong style="color: #00ff88;">SPECTRAL PURITY ANALYSIS REPORT:</strong><br>
         -----------------------------------<br>
-        • Total Absorbed Light (A): ${absorbance}<br>
-        • Extinction Coeff (ε): ${extinction} M⁻¹cm⁻¹<br><br>
-        • Calculated Concentration Result: <br><span style="color: #00ff88; font-weight: bold; font-size: 16px;">${microMolar.toFixed(3)} μM</span> (Micromolar concentration)
+        • Absorbance Ratio Metrics (A₂₆₀ / A₂₈₀): <span style="color: #06b6d4; font-weight: bold;">${ratio.toFixed(3)}</span><br><br>
+        • Quality Assurance Diagnostics:<br>${qualityDiagnostic}
     `;
 }
