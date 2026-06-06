@@ -71,45 +71,44 @@ function runElementLookup() {
 function runStatisticalOutlierEngine() {
     const rawData = document.getElementById('dataInput').value;
     const outBox = document.getElementById('dataResultBox');
-    
-    // Convert the raw string into an array of clean floating-point numbers
     const dataArr = rawData.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+    if (dataArr.length < 3) { alert("Sample size insufficient. Please enter at least 3 numeric values."); return; }
+    const mean = dataArr.reduce((a, b) => a + b, 0) / dataArr.length;
+    const variance = dataArr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (dataArr.length - 1);
+    const stdev = Math.sqrt(variance);
+    const upperLimit = mean + (3 * stdev);
+    const lowerLimit = mean - (3 * stdev);
+    const outliers = dataArr.filter(x => x > upperLimit || x < lowerLimit);
+    outBox.style.display = "block";
+    let outlierReport = outliers.length > 0 ? `<span style="color: #ef4444; font-weight: bold;">⚠️ Outliers Flagged Beyond 3-Sigma Limits: [ ${outliers.join(', ')} ]</span>` : `<span style="color: #00ff88; font-weight: bold;">✅ Dataset Stable: Zero experimental outliers caught.</span>`;
+    outBox.innerHTML = `<strong style="color: #00ff88;">STATISTICAL VARIANCE REPORT:</strong><br>-----------------------------------<br>• Population Count (N): ${dataArr.length} samples<br>• Mean Group Average (μ): ${mean.toFixed(4)}<br>• Standard Deviation (σ): ${stdev.toFixed(4)}<br><br>• Diagnostics Metric: ${outlierReport}`;
+}
+
+// --- TOOL #6 ENGINE ---
+function runAIPredictorEngine() {
+    const input = document.getElementById('aiPeptideInput').value.toUpperCase().trim().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g, '');
+    const outBox = document.getElementById('aiResultBox');
     
-    // Check if there are enough numbers to run a statistical model
-    if (dataArr.length < 3) {
-        alert("Sample size insufficient. Please enter at least 3 numeric values.");
+    if (!input) {
+        alert("Please paste amino acid single-letter residues first.");
         return;
     }
     
-    // 1. Calculate Mean Average (μ)
-    const mean = dataArr.reduce((a, b) => a + b, 0) / dataArr.length;
+    // Check sequence characters against known hydrophobic structures (I, V, L, F, M, A, C, Y, W)
+    const hydroCount = (input.match(/[IVLFMACYW]/g) || []).length;
+    const percentage = ((hydroCount / input.length) * 100).toFixed(1);
     
-    // 2. Calculate Standard Deviation (σ)
-    const variance = dataArr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (dataArr.length - 1);
-    const stdev = Math.sqrt(variance);
-    
-    // 3. Set upper and lower threshold constraints
-    const upperLimit = mean + (3 * stdev);
-    const lowerLimit = mean - (3 * stdev);
-    
-    // Filter values that live outside our boundaries
-    const outliers = dataArr.filter(x => x > upperLimit || x < lowerLimit);
+    // Make solubility predictions based on density parameters
+    const solubility = percentage > 45 ? "Low Fluidity Layer (Organic Co-Solvent Carriers Required)" : "High Fluidity Layer (Aqueous Solution Stable)";
+    const routing = percentage > 45 ? "Reverse-Phase Lipophilic Matrix (C18 HPLC Parsing Lines)" : "Ion-Exchange Chromatography (IEX Gradient Lines)";
 
     outBox.style.display = "block";
-    
-    let outlierReport = "";
-    if (outliers.length > 0) {
-        outlierReport = `<span style="color: #ef4444; font-weight: bold;">⚠️ Outliers Flagged Beyond 3-Sigma Limits: [ ${outliers.join(', ')} ]</span>`;
-    } else {
-        outlierReport = `<span style="color: #00ff88; font-weight: bold;">✅ Dataset Stable: Zero experimental outliers caught.</span>`;
-    }
-
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">STATISTICAL VARIANCE REPORT:</strong><br>
+        <strong style="color: #00ff88;">🧠 HEURISTIC AI FORECAST RADAR:</strong><br>
         -----------------------------------<br>
-        • Population Count (N): ${dataArr.length} samples<br>
-        • Mean Group Average (μ): ${mean.toFixed(4)}<br>
-        • Standard Deviation (σ): ${stdev.toFixed(4)}<br><br>
-        • Diagnostics Metric: ${outlierReport}
+        • Target Sequence: <span style="color: #06b6d4; font-family: monospace;">${input}</span><br>
+        • Hydrophobic Bulk Density: ${percentage}%<br><br>
+        • Predicted Physical Profile: <br><span style="color: #e2e8f0;">${solubility}</span><br><br>
+        • Recommended Purification Route: <br><span style="color: #00ff88; font-weight: bold;">${routing}</span>
     `;
 }
