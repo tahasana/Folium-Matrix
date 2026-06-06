@@ -192,14 +192,26 @@
             <h1>✂️ Trypsin Digestion & Mass Spectrometry Simulator</h1>
             <p>Tool #15: Simulates proteolytic peptide cleavage maps across Lysine (K) and Arginine (R) junctions to calculate fragment mass spectra fingerprints.</p>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                <textarea id="trypsinProteinInput" placeholder="Paste single-letter protein FASTA sequence here (e.g., REEAHKSEVAHRFKDLGE)..." style="margin-bottom: 0;"></textarea>
+                <textarea id="trypsinProteinInput" placeholder="Paste single-letter protein FASTA sequence here..."></textarea>
             </div>
             <button class="btn-glow" onclick="runTrypsinDigestEngine()">Execute Proteolytic Digestion</button>
             <div id="trypsinResultBox" class="result-box"></div>
+        </div>
+
+        <div class="tool-card">
+            <h1>⚡ Peptide Charge Gradient Curve Plotter</h1>
+            <p>Tool #16: Tracks net molecular electrical charge variations across environmental pH spectra to pinpoint the Isoelectric Point (pI).</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <textarea id="chargePeptideInput" placeholder="Enter single-letter protein sequence (e.g., KKHEDRCE)..." style="margin-bottom: 0;"></textarea>
+            </div>
+            <button class="btn-glow" onclick="runChargePlotterEngine()" style="margin-bottom: 15px;">Map Charge Gradient Graph</button>
+            <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
+                <canvas id="chargeCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+            </div>
+            <div id="chargeResultBox" class="result-box"></div>
         </div>
 
     </div>
 
     <script src="script.js"></script>
 </body>
-</html>
