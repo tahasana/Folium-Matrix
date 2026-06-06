@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <div class="workspace-wrapper" style="display: flex; flex-direction: column; gap: 30px; width: 100%; max-width: 600px;">
+    <div class="workspace-wrapper" style="display: flex; flex-direction: column; gap: 30px; width: 100%; max-width: 600px; padding: 40px 0;">
 
         <div class="tool-card">
             <h1>🧬 Macromolecular Sequence Analyzer</h1>
@@ -28,6 +28,25 @@
             <button class="btn-glow" onclick="transcribeSequence()">Transcribe & Translate</button>
             
             <div id="dogmaResultBox" class="result-box"></div>
+        </div>
+
+        <div class="tool-card">
+            <h1>🔬 Amino Acid Structural Profile Finder</h1>
+            <p>Tool #3: Pulls sidechain classifications, accurate isotopic masses, and specific Isoelectric Point parameters.</p>
+            
+            <select id="aaSelect" onchange="runAminoAcidLookup()" style="width: 100%; padding: 12px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; font-size: 14px; outline: none; margin-bottom: 5px;">
+                <option value="">-- Choose Target Residue --</option>
+                <option value="A">Alanine (Ala / A) - Aliphatic Nonpolar</option>
+                <option value="R">Arginine (Arg / R) - Positively Charged Basic</option>
+                <option value="C">Cysteine (Cys / C) - Reactive Thiol Hydrophilic</option>
+                <option value="D">Aspartic Acid (Asp / D) - Negatively Charged Acidic</option>
+                <option value="G">Glycine (Gly / G) - Flexible Achiral Structure</option>
+                <option value="H">Histidine (His / H) - Aromatic Imidazole Ring</option>
+                <option value="K">Lysine (Lys / K) - Basic Amino Sidechain</option>
+                <option value="W">Tryptophan (Trp / W) - Indole Fluorescent Aromatic</option>
+            </select>
+            
+            <div id="aaResultBox" class="result-box"></div>
         </div>
 
     </div>
