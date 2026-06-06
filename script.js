@@ -103,21 +103,35 @@ function runMolarityCalculator() {
     const molarity = parseFloat(document.getElementById('molInputMolarity').value);
     const volume = parseFloat(document.getElementById('molInputVolume').value);
     const outBox = document.getElementById('molarityResultBox');
+    if (isNaN(mw) || isNaN(molarity) || isNaN(volume) || mw <= 0 || molarity <= 0 || volume <= 0) { alert("Please provide accurate, positive numbers for all solution metrics."); return; }
+    const targetMass = molarity * (volume / 1000) * mw;
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">MASS CALCULATION METRICS:</strong><br>-----------------------------------<br>• Target Parameters: <span style="color: #06b6d4;">${molarity} M</span> in <span style="color: #06b6d4;">${volume} mL</span><br>• Solid Formula Weight: ${mw} g/mol<br><br>• Required Measure Target: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">${targetMass.toFixed(4)} grams</span> of dry reagent powder.`;
+}
 
-    if (isNaN(mw) || isNaN(molarity) || isNaN(volume) || mw <= 0 || molarity <= 0 || volume <= 0) {
-        alert("Please provide accurate, positive numbers for all solution metrics.");
+// --- TOOL #8 ENGINE ---
+function runBeerLambertCalculator() {
+    const absorbance = parseFloat(document.getElementById('beerAbsorbance').value);
+    const extinction = parseFloat(document.getElementById('beerExtinction').value);
+    const pathLength = parseFloat(document.getElementById('beerPathLength').value);
+    const outBox = document.getElementById('beerResultBox');
+
+    if (isNaN(absorbance) || isNaN(extinction) || isNaN(pathLength) || absorbance <= 0 || extinction <= 0 || pathLength <= 0) {
+        alert("Please enter valid positive numbers across all spectrophotometer scales.");
         return;
     }
 
-    // Convert mL to Liters and solve equation: Mass = M * V * MW
-    const targetMass = molarity * (volume / 1000) * mw;
+    // Solve for Concentration: c = A / (e * l)
+    const molarConcentration = absorbance / (extinction * pathLength);
+    // Convert base Molar concentrations over to microMolar metrics (multiply by 1,000,000)
+    const microMolar = molarConcentration * 1000000;
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">MASS CALCULATION METRICS:</strong><br>
+        <strong style="color: #00ff88;">SPECTROSCOPY SCAN SPECTRUM LOGS:</strong><br>
         -----------------------------------<br>
-        • Target Parameters: <span style="color: #06b6d4;">${molarity} M</span> in <span style="color: #06b6d4;">${volume} mL</span><br>
-        • Solid Formula Weight: ${mw} g/mol<br><br>
-        • Required Measure Target: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">${targetMass.toFixed(4)} grams</span> of dry reagent powder.
+        • Total Absorbed Light (A): ${absorbance}<br>
+        • Extinction Coeff (ε): ${extinction} M⁻¹cm⁻¹<br><br>
+        • Calculated Concentration Result: <br><span style="color: #00ff88; font-weight: bold; font-size: 16px;">${microMolar.toFixed(3)} μM</span> (Micromolar concentration)
     `;
 }
