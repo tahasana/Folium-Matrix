@@ -4,22 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Folium Matrix - Workspace</title>
-    <!-- This links your HTML to your separate style sheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="tool-card">
-        <h1>🧬 Macromolecular Sequence Analyzer</h1>
-        <p>Tool #1: Computes single-letter residue lengths and exact GC Content percentages from raw biological sequences.</p>
-        
-        <textarea id="sequenceInput" placeholder="Paste your raw DNA/RNA nucleotides here (e.g., ATGCGATCG)..."></textarea>
-        <button class="btn-glow" onclick="analyzeSequence()">Analyze Sequence</button>
-        
-        <div id="resultBox" class="result-box"></div>
+    <div class="workspace-wrapper" style="display: flex; flex-direction: column; gap: 30px; width: 100%; max-width: 600px;">
+
+        <div class="tool-card">
+            <h1>🧬 Macromolecular Sequence Analyzer</h1>
+            <p>Tool #1: Computes single-letter residue lengths and exact GC Content percentages from raw biological sequences.</p>
+            
+            <textarea id="sequenceInput" placeholder="Paste your raw DNA/RNA nucleotides here (e.g., ATGCGATCG)..."></textarea>
+            <button class="btn-glow" onclick="analyzeSequence()">Analyze Sequence</button>
+            
+            <div id="resultBox" class="result-box"></div>
+        </div>
+
+        <div class="tool-card">
+            <h1>🧪 The Central Dogma Transcriptor</h1>
+            <p>Tool #2: Processes coding DNA templates, synthesizes messenger RNA loops, and decodes the functional peptide proteins.</p>
+            
+            <textarea id="dogmaInput" placeholder="Enter coding DNA triplets separated by hyphens (e.g., ATG-GCA-GTC)..."></textarea>
+            <button class="btn-glow" onclick="transcribeSequence()">Transcribe & Translate</button>
+            
+            <div id="dogmaResultBox" class="result-box"></div>
+        </div>
+
     </div>
 
-    <!-- This links your HTML to your separate JavaScript calculations file -->
     <script src="script.js"></script>
 </body>
 </html>
