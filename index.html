@@ -103,10 +103,30 @@
                     <input type="number" id="molInputVolume" placeholder="e.g., 250" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
                 </div>
             </div>
-            
             <button class="btn-glow" onclick="runMolarityCalculator()">Compute Target Mass</button>
-            
             <div id="molarityResultBox" class="result-box"></div>
+        </div>
+
+        <div class="tool-card">
+            <h1>📉 Beer-Lambert Concentration Finder</h1>
+            <p>Tool #8: Traces overall chemical molar concentrations by resolving total optical absorbance profiles.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <div>
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Absorbance Scale Value (A)</label>
+                    <input type="number" id="beerAbsorbance" placeholder="e.g., 0.45" step="any" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Extinction Coefficient (M⁻¹cm⁻¹)</label>
+                    <input type="number" id="beerExtinction" placeholder="e.g., 6220" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Path Length Distance (cm)</label>
+                    <input type="number" id="beerPathLength" value="1" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
+                </div>
+            </div>
+            <button class="btn-glow" onclick="runBeerLambertCalculator()">Compute Concentration</button>
+            <div id="beerResultBox" class="result-box"></div>
         </div>
 
     </div>
