@@ -32,10 +32,7 @@ function transcribeSequence() {
         return;
     }
     
-    // 1. Transcription Phase: Convert DNA Thymin (T) into RNA Uracil (U)
     const mrna = input.replace(/T/g, 'U');
-    
-    // 2. Translation Phase Matrix Dictionary
     const codonWheel = {
         'AUG':'Methionine (Start)','UUU':'Phenylalanine','UUC':'Phenylalanine','UUA':'Leucine','UUG':'Leucine',
         'UCU':'Serine','UCC':'Serine','UCA':'Serine','UCG':'Serine','UAU':'Tyrosine','UAC':'Tyrosine',
@@ -51,8 +48,6 @@ function transcribeSequence() {
     };
 
     let proteinChain = [];
-    
-    // Scan strings in clusters of 3 elements (Codons)
     for (let i = 0; i < mrna.length - 2; i += 3) {
         let codon = mrna.substring(i, i + 3);
         let aminoAcid = codonWheel[codon] || '[Stop Codon Identified]';
@@ -66,5 +61,38 @@ function transcribeSequence() {
         -----------------------------------<br>
         • Synthesized mRNA Strand: <br><span style="color: #06b6d4;">5'- ${mrna} -3'</span><br><br>
         • Decoded Peptide Chain: <br><span style="color: #00ff88;">${proteinChain.join(' ➔ ')}</span>
+    `;
+}
+
+// --- TOOL #3 ENGINE ---
+const aaDatabase = {
+    'A': { name: "Alanine", mass: "89.10", pI: "6.00", sidechain: "Aliphatic Nonpolar Hydrophobic" },
+    'R': { name: "Arginine", mass: "174.20", pI: "10.76", sidechain: "Positively Charged Basic Hydrophilic" },
+    'C': { name: "Cysteine", mass: "121.16", pI: "5.07", sidechain: "Reactive Structural Sulfhydryl Thiol" },
+    'D': { name: "Aspartic Acid", mass: "133.10", pI: "2.77", sidechain: "Negatively Charged Carboxyl Acidic" },
+    'G': { name: "Glycine", mass: "75.07", pI: "5.97", sidechain: "Minimalist Achiral Conformational Flex" },
+    'H': { name: "Histidine", mass: "155.16", pI: "7.59", sidechain: "Aromatic Imidazole Catalytic Ring" },
+    'K': { name: "Lysine", mass: "146.19", pI: "9.74", sidechain: "Charged Butylammonium Basic Group" },
+    'W': { name: "Tryptophan", mass: "204.23", pI: "5.89", sidechain: "Indole Outer Electronic UV Fluorescent Ring" }
+};
+
+function runAminoAcidLookup() {
+    const selection = document.getElementById('aaSelect').value;
+    const outBox = document.getElementById('aaResultBox');
+    
+    if (!selection) {
+        outBox.style.display = "none";
+        return;
+    }
+
+    const data = aaDatabase[selection];
+    outBox.style.display = "block";
+    outBox.innerHTML = `
+        <strong style="color: #00ff88;">RESIDUE CHEMICAL PROFILE:</strong><br>
+        -----------------------------------<br>
+        • Nomenclature: <span style="color: #06b6d4;">${data.name} (${selection})</span><br>
+        • Sidechain Property: ${data.sidechain}<br>
+        • Monoisotopic Mass: ${data.mass} g/mol<br>
+        • Isoelectric Point (pI): <span style="color: #00ff88; font-weight: bold;">${data.pI}</span>
     `;
 }
