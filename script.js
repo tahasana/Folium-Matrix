@@ -88,27 +88,36 @@ function runStatisticalOutlierEngine() {
 function runAIPredictorEngine() {
     const input = document.getElementById('aiPeptideInput').value.toUpperCase().trim().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g, '');
     const outBox = document.getElementById('aiResultBox');
-    
-    if (!input) {
-        alert("Please paste amino acid single-letter residues first.");
-        return;
-    }
-    
-    // Check sequence characters against known hydrophobic structures (I, V, L, F, M, A, C, Y, W)
+    if (!input) { alert("Please paste amino acid single-letter residues first."); return; }
     const hydroCount = (input.match(/[IVLFMACYW]/g) || []).length;
     const percentage = ((hydroCount / input.length) * 100).toFixed(1);
-    
-    // Make solubility predictions based on density parameters
     const solubility = percentage > 45 ? "Low Fluidity Layer (Organic Co-Solvent Carriers Required)" : "High Fluidity Layer (Aqueous Solution Stable)";
     const routing = percentage > 45 ? "Reverse-Phase Lipophilic Matrix (C18 HPLC Parsing Lines)" : "Ion-Exchange Chromatography (IEX Gradient Lines)";
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">🧠 HEURISTIC AI FORECAST RADAR:</strong><br>-----------------------------------<br>• Target Sequence: <span style="color: #06b6d4; font-family: monospace;">${input}</span><br>• Hydrophobic Bulk Density: ${percentage}%<br><br>• Predicted Physical Profile: <br><span style="color: #e2e8f0;">${solubility}</span><br><br>• Recommended Purification Route: <br><span style="color: #00ff88; font-weight: bold;">${routing}</span>`;
+}
+
+// --- TOOL #7 ENGINE ---
+function runMolarityCalculator() {
+    const mw = parseFloat(document.getElementById('molInputMW').value);
+    const molarity = parseFloat(document.getElementById('molInputMolarity').value);
+    const volume = parseFloat(document.getElementById('molInputVolume').value);
+    const outBox = document.getElementById('molarityResultBox');
+
+    if (isNaN(mw) || isNaN(molarity) || isNaN(volume) || mw <= 0 || molarity <= 0 || volume <= 0) {
+        alert("Please provide accurate, positive numbers for all solution metrics.");
+        return;
+    }
+
+    // Convert mL to Liters and solve equation: Mass = M * V * MW
+    const targetMass = molarity * (volume / 1000) * mw;
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">🧠 HEURISTIC AI FORECAST RADAR:</strong><br>
+        <strong style="color: #00ff88;">MASS CALCULATION METRICS:</strong><br>
         -----------------------------------<br>
-        • Target Sequence: <span style="color: #06b6d4; font-family: monospace;">${input}</span><br>
-        • Hydrophobic Bulk Density: ${percentage}%<br><br>
-        • Predicted Physical Profile: <br><span style="color: #e2e8f0;">${solubility}</span><br><br>
-        • Recommended Purification Route: <br><span style="color: #00ff88; font-weight: bold;">${routing}</span>
+        • Target Parameters: <span style="color: #06b6d4;">${molarity} M</span> in <span style="color: #06b6d4;">${volume} mL</span><br>
+        • Solid Formula Weight: ${mw} g/mol<br><br>
+        • Required Measure Target: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">${targetMass.toFixed(4)} grams</span> of dry reagent powder.
     `;
 }
