@@ -175,24 +175,48 @@ function runEnzymeKineticsEngine() {
     const km = parseFloat(document.getElementById('enzymeKm').value);
     const substrate = parseFloat(document.getElementById('enzymeSubstrate').value);
     const outBox = document.getElementById('enzymeResultBox');
+    if (isNaN(vmax) || isNaN(km) || isNaN(substrate) || vmax <= 0 || km <= 0 || substrate <= 0) { alert("Please provide positive numerical dimensions for all velocity indexes."); return; }
+    const initialVelocity = (vmax * substrate) / (km + substrate);
+    const canvas = document.getElementById('kineticsCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const leftMargin = 25, bottomMargin = 135, graphWidth = 260, graphHeight = 115;
+    ctx.beginPath(); ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.moveTo(leftMargin, 10); ctx.lineTo(leftMargin, bottomMargin); ctx.lineTo(leftMargin + graphWidth, bottomMargin); ctx.stroke();
+    const maxScanSubstrateRange = Math.max(substrate * 2, km * 4, 10);
+    ctx.beginPath(); ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2;
+    for (let x = leftMargin; x <= leftMargin + graphWidth; x++) {
+        let currentScanS = ((x - leftMargin) / graphWidth) * maxScanSubstrateRange;
+        let calculatedV = (vmax * currentScanS) / (km + currentScanS);
+        let y = bottomMargin - (calculatedV / vmax) * graphHeight;
+        if (x === leftMargin) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    const dotX = leftMargin + (substrate / maxScanSubstrateRange) * graphWidth; const dotY = bottomMargin - (initialVelocity / vmax) * graphHeight;
+    if (dotX <= leftMargin + graphWidth && dotY >= 10) { ctx.beginPath(); ctx.fillStyle = '#06b6d4'; ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI); ctx.fill(); }
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">SATURATION VELOCITY METRICS:</strong><br>-----------------------------------<br>• Constant Load Substrate [S]: ${substrate} mM<br>• Yield Initial Velocity ($v_0$): <span style="color: #00ff88; font-weight: bold; font-size: 16px;">${initialVelocity.toFixed(4)} μmol/min</span><br><br>• <small style="color: #94a3b8;">Saturation Scale: ${((initialVelocity / vmax) * 100).toFixed(1)}% of Vmax potential reached.</small>`;
+}
 
-    if (isNaN(vmax) || isNaN(km) || isNaN(substrate) || vmax <= 0 || km <= 0 || substrate <= 0) {
-        alert("Please provide positive numerical dimensions for all velocity indexes.");
+// --- TOOL #13 ENGINE ---
+function runBufferTitrationEngine() {
+    const pKa = parseFloat(document.getElementById('titrationBuffer').value);
+    const baseEquiv = parseFloat(document.getElementById('titrationBase').value);
+    const outBox = document.getElementById('titrationResultBox');
+
+    if (isNaN(baseEquiv) || baseEquiv <= 0 || baseEquiv >= 1) {
+        alert("Please enter a base equivalent value strictly between 0.01 and 0.99.");
         return;
     }
 
-    // Solve equation: v0 = (Vmax * S) / (Km + S)
-    const initialVelocity = (vmax * substrate) / (km + substrate);
+    // Solve pH via Henderson-Hasselbalch equation
+    const pH = pKa + Math.log10(baseEquiv / (1 - baseEquiv));
 
-    // Render Canvas Saturation Trace Line
-    const canvas = document.getElementById('kineticsCanvas');
+    // Render Canvas Titration Sigmoid Curve lines
+    const canvas = document.getElementById('titrationCanvas');
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Canvas offsets boundary metrics
     const leftMargin = 25, bottomMargin = 135, graphWidth = 260, graphHeight = 115;
 
-    // Draw baseline matrix graph axes
+    // Draw axis lines
     ctx.beginPath();
     ctx.strokeStyle = '#1e293b';
     ctx.lineWidth = 1;
@@ -201,43 +225,40 @@ function runEnzymeKineticsEngine() {
     ctx.lineTo(leftMargin + graphWidth, bottomMargin);
     ctx.stroke();
 
-    // Scale horizontal scanning context relative to user substrate configuration load
-    const maxScanSubstrateRange = Math.max(substrate * 2, km * 4, 10);
-
-    // Trace sigmoidal saturation line geometry profiles
+    // Plot full mathematical trajectory curve loop
     ctx.beginPath();
     ctx.strokeStyle = '#00ff88';
     ctx.lineWidth = 2;
 
     for (let x = leftMargin; x <= leftMargin + graphWidth; x++) {
-        let currentScanS = ((x - leftMargin) / graphWidth) * maxScanSubstrateRange;
-        let calculatedV = (vmax * currentScanS) / (km + currentScanS);
+        let pct = (x - leftMargin) / graphWidth;
+        if (pct < 0.01) pct = 0.01;
+        if (pct > 0.99) pct = 0.99;
         
-        // Map data values onto canvas container height coordinates
-        let y = bottomMargin - (calculatedV / vmax) * graphHeight;
-        
+        let currentPH = pKa + Math.log10(pct / (1 - pct));
+        // Map pH metrics scale (0 to 14) onto the graph layout grid height
+        let y = bottomMargin - (currentPH / 14) * graphHeight;
+
         if (x === leftMargin) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
     }
     ctx.stroke();
 
-    // Plot intersection lock dot coordinate token
-    const dotX = leftMargin + (substrate / maxScanSubstrateRange) * graphWidth;
-    const dotY = bottomMargin - (initialVelocity / vmax) * graphHeight;
+    // Plot real-time configuration dot tracking intersection node
+    const dotX = leftMargin + baseEquiv * graphWidth;
+    const dotY = bottomMargin - (pH / 14) * graphHeight;
 
-    if (dotX <= leftMargin + graphWidth && dotY >= 10) {
-        ctx.beginPath();
-        ctx.fillStyle = '#06b6d4';
-        ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI);
-        ctx.fill();
-    }
+    ctx.beginPath();
+    ctx.fillStyle = '#06b6d4';
+    ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI);
+    ctx.fill();
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">SATURATION VELOCITY METRICS:</strong><br>
+        <strong style="color: #00ff88;">EQUILIBRIUM TITRATION MATRIX REPORT:</strong><br>
         -----------------------------------<br>
-        • Constant Load Substrate [S]: ${substrate} mM<br>
-        • Yield Initial Velocity ($v_0$): <span style="color: #00ff88; font-weight: bold; font-size: 16px;">${initialVelocity.toFixed(4)} μmol/min</span><br><br>
-        • <small style="color: #94a3b8;">Saturation Scale: ${((initialVelocity / vmax) * 100).toFixed(1)}% of Vmax potential reached.</small>
+        • System settings: pKa reference value = ${pKa}<br>
+        • Base Load ratio: ${baseEquiv} equivalents added<br><br>
+        • Calculated Solution State: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">pH = ${pH.toFixed(2)}</span>
     `;
 }
