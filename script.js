@@ -17,7 +17,7 @@ function transcribeSequence() {
     if (!input) { alert("Please provide valid coding DNA template strands (A, T, C, G)."); return; }
     const mrna = input.replace(/T/g, 'U');
     const codonWheel = {
-        'AUG':'Methionine (Start)','UUU':'Phenylalanine','UUC':'Phenylalanine','UUA':'Leucine','UUG':'Leucine','UCU':'Serine','UCC':'Serine','UCA':'Serine','UCG':'Serine','UAU':'Tyrosine','UAC':'Tyrosine','UGU':'Cysteine','UGC':'Cysteine','UGG':'Tryptophan','CUU':'Leucine','CUC':'Leucine','CUA':'Leucine','CUG':'Leucine','CCU':'Proline','CCC':'Proline','CCA':'Proline','CCG':'Proline','CAU':'Histidine','CAC':'Histidine','CAA':'Glutamine','CAG':'Glutamine','CGU':'Arginine','CGC':'Arginine','CGA':'Arginine','CGG':'Arginine','AUU':'Isoleucine','AUC':'Isoleucine','AUA':'Isoleucine','ACU':'Threonine','ACC':'Threonine','ACA':'Threonine','ACG':'Threonine','AAU':'Asparagine','AAC':'Asparagine','AAA':'Lysine','AAG':'Lysine','AGU':'Serine','AGC':'Serine','AGA':'Arginine','AGG':'Arginine','GUU':'Valine','GUC':'Valine','GUA':'Valine','GUG':'Valine','GCU':'Alanine','GCC':'Alanine','GCA':'Alanine','GCG':'Alanine','GAU':'Aspartic Acid','GAC':'Aspartic Acid','GAA':'Glutamic Acid','GAG':'Glutamic Acid','GGU':'Glycine','GGC':'Glycine','GGA':'Glycine','GGG':'Glycine'
+        'AUG':'Methionine (Start)','UUU':'Phenylalanine','UUC':'Phenylalanine','UUA':'Leucine','UUG':'Leucine','UCU':'Serine','UCC':'Serine','UCA':'Serine','UCG':'Serine','UAU':'Tyrosine','UAC':'Tyrosine','UGU':'Cysteine','UGC':'Cysteine','UGG':'Tryptophan','CUU':'Leucine','CUC':'Leucine','CUA':'Leucine','CUG':'Leucine','CCU':'Proline','CCC':'Proline','CCA':'Proline','CCG':'Proline','CAU':'His','CAC':'His','CAA':'Gln','CAG':'Gln','CGU':'Arg','CGC':'Arg','CGA':'Arg','CGG':'Arg','AUU':'Ile','AUC':'Ile','AUA':'Ile','ACU':'Thr','ACC':'Thr','ACA':'Thr','ACG':'Thr','AAU':'Asn','AAC':'Asn','AAA':'Lys','AAG':'Lys','AGU':'Ser','AGC':'Ser','AGA':'Arg','AGG':'Arg','GUU':'Val','GUC':'Val','GUA':'Val','GUG':'Val','GCU':'Ala','GCC':'Ala','GCA':'Ala','GCG':'Ala','GAU':'Asp','GAC':'Asp','GAA':'Glu','GAG':'Glu','GGU':'Gly','GGC':'Glycine','GGA':'Glycine','GGG':'Glycine'
     };
     let proteinChain = [];
     for (let i = 0; i < mrna.length - 2; i += 3) {
@@ -127,32 +127,44 @@ function runPurityRatioInspector() {
     const a260 = parseFloat(document.getElementById('purityA260').value);
     const a280 = parseFloat(document.getElementById('purityA280').value);
     const outBox = document.getElementById('purityResultBox');
+    if (isNaN(a260) || isNaN(a280) || a260 <= 0 || a280 <= 0) { alert("Please input accurate, positive optical density readings."); return; }
+    const ratio = a260 / a280;
+    let qualityDiagnostic = "";
+    if (ratio >= 1.75 && ratio <= 1.85) { qualityDiagnostic = `<span style="color: #00ff88; font-weight: bold;">Pure DNA Extract Cleared.</span>`; } 
+    else if (ratio >= 1.95 && ratio <= 2.05) { qualityDiagnostic = `<span style="color: #00ff88; font-weight: bold;">Pure RNA Extract Cleared.</span>`; } 
+    else if (ratio > 1.85 && ratio < 1.95) { qualityDiagnostic = `<span style="color: #06b6d4; font-weight: bold;">Mixed Nucleic Extraction (DNA/RNA Equilibrium)</span>`; } 
+    else { qualityDiagnostic = `<span style="color: #ef4444; font-weight: bold;">⚠️ Contamination Detected: Impure sample matrix. Protein or organic residue detected.</span>`; }
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">SPECTRAL PURITY ANALYSIS REPORT:</strong><br>-----------------------------------<br>• Absorbance Ratio Metrics (A₂₆₀ / A₂₈₀): <span style="color: #06b6d4; font-weight: bold;">${ratio.toFixed(3)}</span><br><br>• Quality Assurance Diagnostics:<br>${qualityDiagnostic}`;
+}
 
-    if (isNaN(a260) || isNaN(a280) || a260 <= 0 || a280 <= 0) {
-        alert("Please input accurate, positive optical density readings.");
+// --- TOOL #10 ENGINE ---
+function runDilutionEquation() {
+    const c1 = parseFloat(document.getElementById('dilutionC1').value);
+    const c2 = parseFloat(document.getElementById('dilutionC2').value);
+    const v2 = parseFloat(document.getElementById('dilutionV2').value);
+    const outBox = document.getElementById('dilutionResultBox');
+
+    if (isNaN(c1) || isNaN(c2) || isNaN(v2) || c1 <= 0 || c2 <= 0 || v2 <= 0) {
+        alert("Please enter positive, non-zero values for all dilution blocks.");
+        return;
+    }
+    if (c2 > c1) {
+        alert("Target working concentration (C2) cannot exceed initial stock strength (C1).");
         return;
     }
 
-    // Calculate optical ratio
-    const ratio = a260 / a280;
-    let qualityDiagnostic = "";
-
-    // Evaluate sample purity classifications
-    if (ratio >= 1.75 && ratio <= 1.85) {
-        qualityDiagnostic = `<span style="color: #00ff88; font-weight: bold;">Pure DNA Extract Cleared.</span>`;
-    } else if (ratio >= 1.95 && ratio <= 2.05) {
-        qualityDiagnostic = `<span style="color: #00ff88; font-weight: bold;">Pure RNA Extract Cleared.</span>`;
-    } else if (ratio > 1.85 && ratio < 1.95) {
-        qualityDiagnostic = `<span style="color: #06b6d4; font-weight: bold;">Mixed Nucleic Extraction (DNA/RNA Equilibrium)</span>`;
-    } else {
-        qualityDiagnostic = `<span style="color: #ef4444; font-weight: bold;">⚠️ Contamination Detected: Impure sample matrix. Protein or organic residue detected.</span>`;
-    }
+    // Solve for initial volume needed: V1 = (C2 * V2) / C1
+    const v1 = (c2 * v2) / c1;
+    const solventNeeded = v2 - v1;
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">SPECTRAL PURITY ANALYSIS REPORT:</strong><br>
+        <strong style="color: #00ff88;">VOLUMETRIC DILUTION MIX RECIPE:</strong><br>
         -----------------------------------<br>
-        • Absorbance Ratio Metrics (A₂₆₀ / A₂₈₀): <span style="color: #06b6d4; font-weight: bold;">${ratio.toFixed(3)}</span><br><br>
-        • Quality Assurance Diagnostics:<br>${qualityDiagnostic}
+        • Target: Make <span style="color: #06b6d4;">${v2} mL</span> of <span style="color: #06b6d4;">${c2}X strength solution</span><br>
+        • From a concentrated stock strength of: ${c1}X<br>-----------<br>
+        • Concentrated Stock Aliquot to pipe ($V_1$): <span style="color: #00ff88; font-weight: bold;">${v1.toFixed(2)} mL</span><br>
+        • Water / Buffer Solvent to add: <span style="color: #06b6d4; font-weight: bold;">${solventNeeded.toFixed(2)} mL</span>
     `;
 }
