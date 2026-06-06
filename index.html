@@ -49,6 +49,32 @@
             <div id="aaResultBox" class="result-box"></div>
         </div>
 
+        <div class="tool-card">
+            <h1>⚛️ Bio-Element Organic Reference Matrix</h1>
+            <p>Tool #4: Loads standard covalent bonding enthalpies, valence clouds, and atomic properties of vital organic atoms.</p>
+            
+            <select id="elementSelect" onchange="runElementLookup()" style="width: 100%; padding: 12px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; font-size: 14px; outline: none; margin-bottom: 5px;">
+                <option value="">-- Choose Target Core Atom --</option>
+                <option value="C">Carbon (C) - Organic Infrastructure Node</option>
+                <option value="H">Hydrogen (H) - Solution Matrix Proton</option>
+                <option value="N">Nitrogen (N) - Peptidyl Planar Amide Link</option>
+                <option value="O">Oxygen (O) - Hydrogen Bond Dipole Acceptor</option>
+                <option value="P">Phosphorus (P) - Phosphoanhydride Bridge</option>
+            </select>
+            
+            <div id="elementResultBox" class="result-box"></div>
+        </div>
+
+        <div class="tool-card">
+            <h1>📊 Statistical Experimental Outlier Tracker</h1>
+            <p>Tool #5: Evaluates manual lab data ranges using 3-Sigma parameters to catch and flag severe volumetric pipetting deviations.</p>
+            
+            <textarea id="dataInput" placeholder="Paste dataset numbers separated by commas (e.g., 10.1, 10.2, 9.9, 10.0, 45.8, 10.3)..."></textarea>
+            <button class="btn-glow" onclick="runStatisticalOutlierEngine()">Evaluate Dataset Array</button>
+            
+            <div id="dataResultBox" class="result-box"></div>
+        </div>
+
     </div>
 
     <script src="script.js"></script>
