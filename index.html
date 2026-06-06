@@ -3,12 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Folium Matrix - Workspace</title>
+    <title>Folium Matrix - Lab Node</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="workspace-wrapper" style="display: flex; flex-direction: column; gap: 30px; width: 100%; max-width: 600px; padding: 40px 0;">
+    <div id="loginGate" class="gate-card">
+        <h1>FOLIUM MATRIX</h1>
+        <p>SECURE LABORATORY GATEWAY</p>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+            <input type="email" id="gateEmail" placeholder="Access Email Core">
+            <input type="password" id="gatePass" placeholder="Security Token Key">
+        </div>
+        <button class="btn-glow" onclick="checkCredentials()">Initialize Portal Session</button>
+    </div>
+
+    <div id="workspaceWrapper" class="workspace-wrapper" style="display: none; flex-direction: column; gap: 30px; width: 100%; max-width: 600px; padding: 40px 0;">
 
         <div class="tool-card">
             <h1>🧬 Macromolecular Sequence Analyzer</h1>
@@ -166,24 +176,26 @@
         <div class="tool-card">
             <h1>✂️ Palindromic Restriction Enzyme Mapper</h1>
             <p>Tool #14: Simulates restriction digestion fragmentation pipelines against standard biochemical enzyme motifs.</p>
-            
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                <div>
-                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Select Target Restriction Enzyme</label>
-                    <select id="enzymeRestrictionSelect" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
-                        <option value="GAATTC">EcoRI (Motif: G^AATTC)</option>
-                        <option value="AAGCTT">HindIII (Motif: A^AGCTT)</option>
-                        <option value="GGATCC">BamHI (Motif: G^GATCC)</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Raw DNA Nucleotide Sequence</label>
-                    <textarea id="restrictionDnaInput" placeholder="Paste raw DNA characters here... (e.g., AATGAATTCGGATCCTTAAAGCTTCCAA)" style="margin-bottom: 0;"></textarea>
-                </div>
+                <select id="enzymeRestrictionSelect">
+                    <option value="GAATTC">EcoRI (Motif: G^AATTC)</option>
+                    <option value="AAGCTT">HindIII (Motif: A^AGCTT)</option>
+                    <option value="GGATCC">BamHI (Motif: G^GATCC)</option>
+                </select>
+                <textarea id="restrictionDnaInput" placeholder="Paste raw DNA characters here..."></textarea>
             </div>
-            
             <button class="btn-glow" onclick="runRestrictionMapperEngine()">Run Restriction Mapping Digest</button>
             <div id="restrictionResultBox" class="result-box"></div>
+        </div>
+
+        <div class="tool-card">
+            <h1>✂️ Trypsin Digestion & Mass Spectrometry Simulator</h1>
+            <p>Tool #15: Simulates proteolytic peptide cleavage maps across Lysine (K) and Arginine (R) junctions to calculate fragment mass spectra fingerprints.</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <textarea id="trypsinProteinInput" placeholder="Paste single-letter protein FASTA sequence here (e.g., REEAHKSEVAHRFKDLGE)..." style="margin-bottom: 0;"></textarea>
+            </div>
+            <button class="btn-glow" onclick="runTrypsinDigestEngine()">Execute Proteolytic Digestion</button>
+            <div id="trypsinResultBox" class="result-box"></div>
         </div>
 
     </div>
