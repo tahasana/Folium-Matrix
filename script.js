@@ -1,3 +1,13 @@
+// --- 🔒 CENTRAL SECURITY HANDSHAKE GATEWAY ---
+function checkCredentials() {
+    const email = document.getElementById('gateEmail').value.trim();
+    const pass = document.getElementById('gatePass').value.trim();
+    const loginGate = document.getElementById('loginGate');
+    const workspace = document.getElementById('workspaceWrapper');
+    if (email === "tahasana@mj.edu" && pass === "admin123") { loginGate.style.display = "none"; workspace.style.display = "flex"; } 
+    else { alert("Access Denied: Invalid security node token."); }
+}
+
 // --- TOOL #1 ENGINE ---
 function analyzeSequence() {
     const rawInput = document.getElementById('sequenceInput').value.trim().toUpperCase();
@@ -223,42 +233,63 @@ function runRestrictionMapperEngine() {
     const motif = document.getElementById('enzymeRestrictionSelect').value;
     const rawDna = document.getElementById('restrictionDnaInput').value.toUpperCase().trim().replace(/[^ATCG]/g, '');
     const outBox = document.getElementById('restrictionResultBox');
+    if (!rawDna) { alert("Please paste a valid sequence of A, T, C, G DNA bases first."); return; }
+    let cutIndices = []; let searchIndex = 0;
+    while ((searchIndex = rawDna.indexOf(motif, searchIndex)) !== -1) { cutIndices.push(searchIndex + 1); searchIndex += 1; }
+    let fragments = []; let lastCut = 0;
+    cutIndices.forEach(cut => { fragments.push(rawDna.substring(lastCut, cut)); lastCut = cut; }); fragments.push(rawDna.substring(lastCut));
+    const fragmentLengths = fragments.map(f => f.length);
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">RESTRICTION MAPPING REPORT:</strong><br>-----------------------------------<br>• Active Target Motif: <span style="color: #06b6d4; font-family: monospace;">${motif}</span><br>• Total Cleavage Sites Found: ${cutIndices.length}<br>• Cleavage Slice Coordinates: [ ${cutIndices.length ? cutIndices.join(', ') : 'None'} ]<br><br>• Generated Fragment Count: <span style="color: #00ff88; font-weight: bold;">${fragments.length}</span><br>• Sliced Fragment Base Lengths: <span style="color: #06b6d4; font-family: monospace;">${fragmentLengths.join(' bp, ')} bp</span>`;
+}
 
-    if (!rawDna) {
-        alert("Please paste a valid sequence of A, T, C, G DNA bases first.");
+// --- TOOL #15 ENGINE ---
+function runTrypsinDigestEngine() {
+    const rawProtein = document.getElementById('trypsinProteinInput').value.toUpperCase().trim().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g, '');
+    const outBox = document.getElementById('trypsinResultBox');
+
+    if (!rawProtein) {
+        alert("Please paste an amino acid protein sequence string first.");
         return;
     }
 
-    let cutIndices = [];
-    let searchIndex = 0;
+    // Lookup table matching precise residue mass calculations
+    const residueMasses = {
+        'A':71.08, 'R':156.19, 'N':114.10, 'D':115.09, 'C':103.14, 'Q':128.13, 'E':129.12, 
+        'G':57.05, 'H':137.14, 'I':113.16, 'L':113.16, 'K':128.17, 'M':131.20, 'F':147.18, 
+        'P':97.12, 'S':87.08, 'T':101.11, 'W':186.21, 'Y':163.18, 'V':99.13
+    };
 
-    // Scan sequence locations sequentially for palindromic matches
-    while ((searchIndex = rawDna.indexOf(motif, searchIndex)) !== -1) {
-        // Map realistic biological cuts immediately inside the first sequence block
-        cutIndices.push(searchIndex + 1);
-        searchIndex += 1; 
-    }
-
-    // Process piece calculations by segmenting sequence intervals
     let fragments = [];
-    let lastCut = 0;
+    let currentFragment = "";
 
-    cutIndices.forEach(cut => {
-        fragments.push(rawDna.substring(lastCut, cut));
-        lastCut = cut;
+    // Parse the loop sequence to execute cleavage cuts immediately after R or K residues
+    for (let i = 0; i < rawProtein.length; i++) {
+        const residue = rawProtein[i];
+        currentFragment += residue;
+
+        if (residue === 'K' || residue === 'R') {
+            fragments.push(currentFragment);
+            currentFragment = "";
+        }
+    }
+    if (currentFragment) fragments.push(currentFragment); // Append tail segment
+
+    let reportRows = "";
+    fragments.forEach((frag, idx) => {
+        // Calculate raw mass total and append standard +18.02 water mass block
+        let massAccumulator = 18.02;
+        for (let char of frag) { massAccumulator += (residueMasses[char] || 0); }
+
+        reportRows += `• Frag #${idx + 1} [${frag}]: <span style="color: #00ff88; font-weight: bold;">${massAccumulator.toFixed(2)} u</span><br>`;
     });
-    fragments.push(rawDna.substring(lastCut)); // Capture tail piece
-
-    const fragmentLengths = fragments.map(f => f.length);
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">RESTRICTION MAPPING REPORT:</strong><br>
+        <strong style="color: #00ff88;">TRYPSIN PROTEOLYTIC DIGEST REPORT:</strong><br>
         -----------------------------------<br>
-        • Active Target Motif: <span style="color: #06b6d4; font-family: monospace;">${motif}</span><br>
-        • Total Cleavage Sites Found: ${cutIndices.length}<br>
-        • Cleavage Slice Coordinates: [ ${cutIndices.length ? cutIndices.join(', ') : 'None'} ]<br><br>
-        • Generated Fragment Count: <span style="color: #00ff88; font-weight: bold;">${fragments.length}</span><br>
-        • Sliced Fragment Base Lengths: <span style="color: #06b6d4; font-family: monospace;">${fragmentLengths.join(' bp, ')} bp</span>
+        • Total Cleaved Peptides: ${fragments.length} pieces<br><br>
+        <strong>PEPTIDE MASS FINGERPRINT:</strong><br>
+        ${reportRows}
     `;
 }
