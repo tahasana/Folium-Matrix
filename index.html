@@ -133,30 +133,45 @@
         <div class="tool-card">
             <h1>📊 Enzyme Kinetics Michaelis-Menten Plotter</h1>
             <p>Tool #12: Processes velocities profiles and draws hyperbolic curves across canvas displays.</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <input type="number" id="enzymeVmax" placeholder="Max Velocity / Vmax (μmol/min)">
+                <input type="number" id="enzymeKm" placeholder="Michaelis Constant / Km (mM)">
+                <input type="number" id="enzymeSubstrate" placeholder="Substrate Load / [S] (mM)">
+            </div>
+            <button class="btn-glow" onclick="runEnzymeKineticsEngine()" style="margin-bottom: 15px;">Process & Plot Saturation Curve</button>
+            <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 5px;">
+                <canvas id="kineticsCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+            </div>
+            <div id="enzymeResultBox" class="result-box"></div>
+        </div>
+
+        <div class="tool-card">
+            <h1>🧪 Buffer Titration Curve Simulator</h1>
+            <p>Tool #13: Simulates pH shifting dynamics during titration profiles and renders weak acid equilibrium lines.</p>
             
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                 <div>
-                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Max Velocity / Vmax (μmol/min)</label>
-                    <input type="number" id="enzymeVmax" placeholder="e.g., 120" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Select Buffer Core System (pKa)</label>
+                    <select id="titrationBuffer" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
+                        <option value="4.76">Acetate Buffer System (pKa = 4.76)</option>
+                        <option value="7.20">Phosphate Buffer System (pKa = 7.20)</option>
+                        <option value="8.06">Tris Buffer System (pKa = 8.06)</option>
+                    </select>
                 </div>
                 <div>
-                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Michaelis Constant / Km (mM)</label>
-                    <input type="number" id="enzymeKm" placeholder="e.g., 2.5" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
-                </div>
-                <div>
-                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Substrate Load / [S] (mM)</label>
-                    <input type="number" id="enzymeSubstrate" placeholder="e.g., 5.0" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Strong Base Equivalents Added (0.01 to 0.99)</label>
+                    <input type="number" id="titrationBase" placeholder="e.g., 0.50 (for a perfect half-titration configuration)" step="0.01" min="0.01" max="0.99" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
                 </div>
             </div>
             
-            <button class="btn-glow" onclick="runEnzymeKineticsEngine()" style="margin-bottom: 15px;">Process & Plot Saturation Curve</button>
+            <button class="btn-glow" onclick="runBufferTitrationEngine()" style="margin-bottom: 15px;">Simulate & Plot Titration Matrix</button>
             
             <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
-                <span style="font-size: 11px; font-weight: bold; color: #00ff88; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Bioluminescent Trace Grid</span>
-                <canvas id="kineticsCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+                <span style="font-size: 11px; font-weight: bold; color: #00ff88; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">pH Trajectory equilibrium Curve</span>
+                <canvas id="titrationCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
             </div>
             
-            <div id="enzymeResultBox" class="result-box"></div>
+            <div id="titrationResultBox" class="result-box"></div>
         </div>
 
     </div>
