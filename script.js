@@ -144,27 +144,49 @@ function runDilutionEquation() {
     const c2 = parseFloat(document.getElementById('dilutionC2').value);
     const v2 = parseFloat(document.getElementById('dilutionV2').value);
     const outBox = document.getElementById('dilutionResultBox');
-
-    if (isNaN(c1) || isNaN(c2) || isNaN(v2) || c1 <= 0 || c2 <= 0 || v2 <= 0) {
-        alert("Please enter positive, non-zero values for all dilution blocks.");
-        return;
-    }
-    if (c2 > c1) {
-        alert("Target working concentration (C2) cannot exceed initial stock strength (C1).");
-        return;
-    }
-
-    // Solve for initial volume needed: V1 = (C2 * V2) / C1
+    if (isNaN(c1) || isNaN(c2) || isNaN(v2) || c1 <= 0 || c2 <= 0 || v2 <= 0) { alert("Please enter positive, non-zero values for all dilution blocks."); return; }
+    if (c2 > c1) { alert("Target working concentration (C2) cannot exceed initial stock strength (C1)."); return; }
     const v1 = (c2 * v2) / c1;
     const solventNeeded = v2 - v1;
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">VOLUMETRIC DILUTION MIX RECIPE:</strong><br>-----------------------------------<br>• Target: Make <span style="color: #06b6d4;">${v2} mL</span> of <span style="color: #06b6d4;">${c2}X strength solution</span><br>• From a concentrated stock strength of: ${c1}X<br>-----------<br>• Concentrated Stock Aliquot to pipe ($V_1$): <span style="color: #00ff88; font-weight: bold;">${v1.toFixed(2)} mL</span><br>• Water / Buffer Solvent to add: <span style="color: #06b6d4; font-weight: bold;">${solventNeeded.toFixed(2)} mL</span>`;
+}
+
+// --- TOOL #11 ENGINE ---
+function runPCRMasterMixFormulator() {
+    const tubes = parseInt(document.getElementById('pcrTubesCount').value);
+    const outBox = document.getElementById('pcrMixResultBox');
+
+    if (isNaN(tubes) || tubes <= 0) {
+        alert("Please provide a valid number of reaction tubes.");
+        return;
+    }
+
+    // Standard baseline recipe requirements per single 25 uL reaction tube
+    const baselineReagents = [
+        { name: "Molecular Grade H₂O", unitVol: 12.5 },
+        { name: "10X Taq Buffer Matrix", unitVol: 2.5 },
+        { name: "Forward Primer (10 μM)", unitVol: 1.0 },
+        { name: "Reverse Primer (10 μM)", unitVol: 1.0 },
+        { name: "dNTPs Mix Core (10 mM)", unitVol: 0.5 },
+        { name: "Active Taq DNA Polymerase", unitVol: 0.25 },
+        { name: "Template Extraction DNA", unitVol: 7.25 }
+    ];
+
+    // Multiply by tubes count + 10% volume safety cushion (Factor: tubes * 1.1)
+    const scaleMultiplier = tubes * 1.1;
+    let listRows = "";
+
+    baselineReagents.forEach(r => {
+        const totalVol = r.unitVol * scaleMultiplier;
+        listRows += `• ${r.name}: <span style="color: #06b6d4;">${r.unitVol} μL</span> ➔ <span style="color: #00ff88; font-weight: bold;">${totalVol.toFixed(2)} μL</span> bulk<br>`;
+    });
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">VOLUMETRIC DILUTION MIX RECIPE:</strong><br>
+        <strong style="color: #00ff88;">PCR BULK RECIPE FORMULATION:</strong><br>
+        • Reaction Count: ${tubes} tubes (+10% wall-loss safety padding applied)<br>
         -----------------------------------<br>
-        • Target: Make <span style="color: #06b6d4;">${v2} mL</span> of <span style="color: #06b6d4;">${c2}X strength solution</span><br>
-        • From a concentrated stock strength of: ${c1}X<br>-----------<br>
-        • Concentrated Stock Aliquot to pipe ($V_1$): <span style="color: #00ff88; font-weight: bold;">${v1.toFixed(2)} mL</span><br>
-        • Water / Buffer Solvent to add: <span style="color: #06b6d4; font-weight: bold;">${solventNeeded.toFixed(2)} mL</span>
+        ${listRows}
     `;
 }
