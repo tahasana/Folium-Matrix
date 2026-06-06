@@ -156,37 +156,88 @@ function runDilutionEquation() {
 function runPCRMasterMixFormulator() {
     const tubes = parseInt(document.getElementById('pcrTubesCount').value);
     const outBox = document.getElementById('pcrMixResultBox');
+    if (isNaN(tubes) || tubes <= 0) { alert("Please provide a valid number of reaction tubes."); return; }
+    const baselineReagents = [
+        { name: "Molecular Grade H₂O", unitVol: 12.5 }, { name: "10X Taq Buffer Matrix", unitVol: 2.5 },
+        { name: "Forward Primer (10 μM)", unitVol: 1.0 }, { name: "Reverse Primer (10 μM)", unitVol: 1.0 },
+        { name: "dNTPs Mix Core (10 mM)", unitVol: 0.5 }, { name: "Active Taq DNA Polymerase", unitVol: 0.25 },
+        { name: "Template Extraction DNA", unitVol: 7.25 }
+    ];
+    const scaleMultiplier = tubes * 1.1; let listRows = "";
+    baselineReagents.forEach(r => { const totalVol = r.unitVol * scaleMultiplier; listRows += `• ${r.name}: <span style="color: #06b6d4;">${r.unitVol} μL</span> ➔ <span style="color: #00ff88; font-weight: bold;">${totalVol.toFixed(2)} μL</span> bulk<br>`; });
+    outBox.style.display = "block";
+    outBox.innerHTML = `<strong style="color: #00ff88;">PCR BULK RECIPE FORMULATION:</strong><br>• Reaction Count: ${tubes} tubes (+10% wall-loss safety padding applied)<br>-----------------------------------<br>${listRows}`;
+}
 
-    if (isNaN(tubes) || tubes <= 0) {
-        alert("Please provide a valid number of reaction tubes.");
+// --- TOOL #12 ENGINE ---
+function runEnzymeKineticsEngine() {
+    const vmax = parseFloat(document.getElementById('enzymeVmax').value);
+    const km = parseFloat(document.getElementById('enzymeKm').value);
+    const substrate = parseFloat(document.getElementById('enzymeSubstrate').value);
+    const outBox = document.getElementById('enzymeResultBox');
+
+    if (isNaN(vmax) || isNaN(km) || isNaN(substrate) || vmax <= 0 || km <= 0 || substrate <= 0) {
+        alert("Please provide positive numerical dimensions for all velocity indexes.");
         return;
     }
 
-    // Standard baseline recipe requirements per single 25 uL reaction tube
-    const baselineReagents = [
-        { name: "Molecular Grade H₂O", unitVol: 12.5 },
-        { name: "10X Taq Buffer Matrix", unitVol: 2.5 },
-        { name: "Forward Primer (10 μM)", unitVol: 1.0 },
-        { name: "Reverse Primer (10 μM)", unitVol: 1.0 },
-        { name: "dNTPs Mix Core (10 mM)", unitVol: 0.5 },
-        { name: "Active Taq DNA Polymerase", unitVol: 0.25 },
-        { name: "Template Extraction DNA", unitVol: 7.25 }
-    ];
+    // Solve equation: v0 = (Vmax * S) / (Km + S)
+    const initialVelocity = (vmax * substrate) / (km + substrate);
 
-    // Multiply by tubes count + 10% volume safety cushion (Factor: tubes * 1.1)
-    const scaleMultiplier = tubes * 1.1;
-    let listRows = "";
+    // Render Canvas Saturation Trace Line
+    const canvas = document.getElementById('kineticsCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    baselineReagents.forEach(r => {
-        const totalVol = r.unitVol * scaleMultiplier;
-        listRows += `• ${r.name}: <span style="color: #06b6d4;">${r.unitVol} μL</span> ➔ <span style="color: #00ff88; font-weight: bold;">${totalVol.toFixed(2)} μL</span> bulk<br>`;
-    });
+    // Canvas offsets boundary metrics
+    const leftMargin = 25, bottomMargin = 135, graphWidth = 260, graphHeight = 115;
+
+    // Draw baseline matrix graph axes
+    ctx.beginPath();
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1;
+    ctx.moveTo(leftMargin, 10);
+    ctx.lineTo(leftMargin, bottomMargin);
+    ctx.lineTo(leftMargin + graphWidth, bottomMargin);
+    ctx.stroke();
+
+    // Scale horizontal scanning context relative to user substrate configuration load
+    const maxScanSubstrateRange = Math.max(substrate * 2, km * 4, 10);
+
+    // Trace sigmoidal saturation line geometry profiles
+    ctx.beginPath();
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 2;
+
+    for (let x = leftMargin; x <= leftMargin + graphWidth; x++) {
+        let currentScanS = ((x - leftMargin) / graphWidth) * maxScanSubstrateRange;
+        let calculatedV = (vmax * currentScanS) / (km + currentScanS);
+        
+        // Map data values onto canvas container height coordinates
+        let y = bottomMargin - (calculatedV / vmax) * graphHeight;
+        
+        if (x === leftMargin) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Plot intersection lock dot coordinate token
+    const dotX = leftMargin + (substrate / maxScanSubstrateRange) * graphWidth;
+    const dotY = bottomMargin - (initialVelocity / vmax) * graphHeight;
+
+    if (dotX <= leftMargin + graphWidth && dotY >= 10) {
+        ctx.beginPath();
+        ctx.fillStyle = '#06b6d4';
+        ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI);
+        ctx.fill();
+    }
 
     outBox.style.display = "block";
     outBox.innerHTML = `
-        <strong style="color: #00ff88;">PCR BULK RECIPE FORMULATION:</strong><br>
-        • Reaction Count: ${tubes} tubes (+10% wall-loss safety padding applied)<br>
+        <strong style="color: #00ff88;">SATURATION VELOCITY METRICS:</strong><br>
         -----------------------------------<br>
-        ${listRows}
+        • Constant Load Substrate [S]: ${substrate} mM<br>
+        • Yield Initial Velocity ($v_0$): <span style="color: #00ff88; font-weight: bold; font-size: 16px;">${initialVelocity.toFixed(4)} μmol/min</span><br><br>
+        • <small style="color: #94a3b8;">Saturation Scale: ${((initialVelocity / vmax) * 100).toFixed(1)}% of Vmax potential reached.</small>
     `;
 }
