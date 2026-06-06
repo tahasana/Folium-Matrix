@@ -101,17 +101,32 @@
             <h1>🔬 Nucleic Acid Purity Inspector (A₂₆₀/A₂₈₀)</h1>
             <p>Tool #9: Evaluates sample isolation quality controls via optical quotient thresholds to verify macromolecular extracts.</p>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                <div>
-                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Absorbance value at 260 nm (A₂₆₀)</label>
-                    <input type="number" id="purityA260" placeholder="e.g., 0.38" step="any" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
-                </div>
-                <div>
-                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Absorbance value at 280 nm (A₂₈₀)</label>
-                    <input type="number" id="purityA280" placeholder="e.g., 0.21" step="any" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
-                </div>
+                <input type="number" id="purityA260" placeholder="Absorbance value at 260 nm (A₂₆₀)" step="any">
+                <input type="number" id="purityA280" placeholder="Absorbance value at 280 nm (A₂₈₀)" step="any">
             </div>
             <button class="btn-glow" onclick="runPurityRatioInspector()">Inspect Sample Extract</button>
             <div id="purityResultBox" class="result-box"></div>
+        </div>
+
+        <div class="tool-card">
+            <h1>💦 Stock Concentrate Serial Dilution Engine</h1>
+            <p>Tool #10: Computes stock solute allocations and required solvent diluent mixing ratios using C₁V₁ = C₂V₂ parameters.</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <div>
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Concentration of Initial Stock ($C_1$)</label>
+                    <input type="number" id="dilutionC1" placeholder="e.g., 10 (or a 10X concentrate buffer)" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Target Working Concentration ($C_2$)</label>
+                    <input type="number" id="dilutionC2" placeholder="e.g., 1 (for a 1X final use concentration)" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px;">Target Working Final Volume ($V_2$) (mL)</label>
+                    <input type="number" id="dilutionV2" placeholder="e.g., 500" style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none;">
+                </div>
+            </div>
+            <button class="btn-glow" onclick="runDilutionEquation()">Compute Volumetric Mix</button>
+            <div id="dilutionResultBox" class="result-box"></div>
         </div>
 
     </div>
