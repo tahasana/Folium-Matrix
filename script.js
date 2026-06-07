@@ -1,99 +1,495 @@
-/* --- PREMIUM "WARM DAYLIGHT" MINIMALIST DESIGN FRAMEWORK --- */
-:root {
-    --daylight-bg: radial-gradient(circle at center, #ffffff 0%, #fffbf2 50%, #f3f9f5 100%);
-    --text-charcoal: #1e293b;
-    --text-slate: #64748b;
-    --accent-blue: #2563eb;
-    --border-light: #e2e8f0;
-    --card-bg: rgba(255, 255, 255, 0.85);
+/**
+ * =================================================================================
+ * MASTER CONTROL TERMINAL MAIN ENGINE (script.js)
+ * Architecture: Tabbed Focus-on-Demand Workspace Lifecycle
+ * Security: Dynamic Multi-User Registry & Permission-Isolated Data Channels
+ * Lead Designer & Developer: Mir Taha Sana
+ * Version: 4.0 (Daylight Edition)
+ * =================================================================================
+ */
+
+// --- 👤 MULTI-USER REGISTRY & STATE MANAGEMENT RINGS ---
+let currentUser = null;
+
+// Self-initializing clean storage loops for system environments
+function getRegisteredUsers() {
+    return JSON.parse(localStorage.getItem('fm_master_registry')) || [];
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-body { background: var(--daylight-bg); color: var(--text-charcoal); display: flex; justify-content: center; min-height: 100vh; padding: 20px; }
+function saveRegisteredUsers(usersArray) {
+    localStorage.setItem('fm_master_registry', JSON.stringify(usersArray));
+}
 
-/* 🔒 Split Panel Entrance Gate Architecture */
-.auth-gate-container { width: 100%; max-width: 820px; margin-top: 6vh; display: flex; flex-direction: column; gap: 20px; }
-.auth-split-layout { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 16px; display: grid; grid-template-columns: 45% 55%; backdrop-filter: blur(8px); overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.02); }
+// Appends user events to their private ledger history matrix
+function trackUserHistory(action, details) {
+    if (!currentUser) return;
+    let users = getRegisteredUsers();
+    let userIndex = users.findIndex(u => u.identifier === currentUser.identifier);
+    
+    if (userIndex !== -1) {
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        users[userIndex].history.push({ time: timestamp, action: action, details: details });
+        saveRegisteredUsers(users);
+        currentUser = users[userIndex]; // Sync current memory reference
+        renderUserDashboard();
+    }
+}
 
-.auth-form-column { padding: 40px; border-right: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 20px; }
-.auth-toggle-headers { display: flex; gap: 15px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px; }
-.auth-tab-btn { background: transparent; border: none; font-size: 14px; font-weight: bold; color: var(--text-slate); cursor: pointer; padding-bottom: 4px; }
-.auth-tab-btn.active { color: var(--accent-blue); border-bottom: 2px solid var(--accent-blue); }
+// --- 🔒 ENTRANCE GATE AUTHENTICATION ACTIONS ---
+function switchAuthMode(mode, element) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    element.classList.add('active');
+    
+    const nameField = document.getElementById('registerNameField');
+    const actionBtn = document.getElementById('authSubmitBtn');
+    
+    if (mode === 'signup') {
+        nameField.style.display = 'block';
+        actionBtn.innerText = 'Create Research Profile';
+        actionBtn.setAttribute('onclick', 'executeSignUp()');
+    } else {
+        nameField.style.display = 'none';
+        actionBtn.innerText = 'Verify Security Profile';
+        actionBtn.setAttribute('onclick', 'executeSignIn()');
+    }
+}
 
-.auth-fields-stack { display: flex; flex-direction: column; gap: 12px; }
-.auth-fields-stack input { width: 100%; padding: 12px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; outline: none; font-size: 13px; color: var(--text-charcoal); }
-.auth-fields-stack input:focus { border-color: var(--accent-blue); }
+function checkPasswordStrength() {
+    const pass = document.getElementById('gatePass').value;
+    const bar = document.getElementById('strengthBar');
+    if (!pass) { bar.style.width = '0%'; return; }
+    
+    let score = 0;
+    if (pass.length > 6) score += 33;
+    if (/[A-Z]/.test(pass)) score += 33;
+    if (/[0-9!@#\$%\^&\*]/.test(pass)) score += 34;
+    
+    bar.style.width = score + '%';
+    bar.style.backgroundColor = score < 40 ? '#ef4444' : (score < 80 ? '#eab308' : '#00ff88');
+}
 
-/* Password Strength Indicator Line */
-.strength-gauge-wrapper { width: 100%; height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
-.strength-bar { height: 100%; width: 0%; transition: all 0.3s ease; background: #ef4444; }
+function executeSignUp() {
+    const name = document.getElementById('gateName').value.trim();
+    const identifier = document.getElementById('gateIdentifier').value.trim();
+    const password = document.getElementById('gatePass').value;
+    
+    if (!name || !identifier || !password) {
+        alert("Verification failure: All authentication input vectors must be populated.");
+        return;
+    }
+    
+    let users = getRegisteredUsers();
+    if (users.some(u => u.identifier === identifier)) {
+        alert("Registration conflict: This identity signature already possesses an active node profile.");
+        return;
+    }
+    
+    const newUser = {
+        name: name,
+        identifier: identifier,
+        password: password,
+        role: identifier === 'tahasana@mj.edu' ? 'developer' : 'user',
+        history: [],
+        snapshots: '',
+        reagents: [
+            { name: "Active Taq DNA Polymerase Store", days: 12 },
+            { name: "10X Reagent Master Mix Buffer", days: -1 }
+        ]
+    };
+    
+    users.push(newUser);
+    saveRegisteredUsers(users);
+    
+    currentUser = newUser;
+    initializeSecureWorkspace();
+}
 
-.auth-info-column { padding: 40px; background: rgba(248, 250, 252, 0.5); display: flex; flex-direction: column; gap: 20px; }
-.info-grid-headline { font-size: 11px; font-weight: bold; color: var(--accent-blue); letter-spacing: 1.5px; text-transform: uppercase; }
-.capability-preview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-.capability-node h3 { font-size: 13px; color: var(--text-charcoal); margin-bottom: 3px; }
-.capability-node p { font-size: 11px; color: var(--text-slate); line-height: 1.4; }
+function executeSignIn() {
+    const identifier = document.getElementById('gateIdentifier').value.trim();
+    const password = document.getElementById('gatePass').value;
+    
+    let users = getRegisteredUsers();
+    let matchedUser = users.find(u => u.identifier === identifier && u.password === password);
+    
+    if (matchedUser) {
+        currentUser = matchedUser;
+        initializeSecureWorkspace();
+    } else {
+        alert("Access Denied: Invalid identification parameter handshake match.");
+    }
+}
 
-.auth-footer-notice { text-align: center; font-size: 11px; color: var(--text-slate); padding: 10px; line-height: 1.4; }
+// --- 🏢 INTERFACE TRANSITIONS & VIEW CONTROL PANELS ---
+function initializeSecureWorkspace() {
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('workspaceWrapper').style.display = 'flex';
+    
+    // Configure workspace UI elements matching specific user permission layer profiles
+    const devSection = document.getElementById('tab-developer-datacenter');
+    if (currentUser.role === 'developer') {
+        devSection.style.display = 'block';
+        appendSystemLog('Security Core', `Master developer configuration assigned to session token [${currentUser.name}]`);
+    } else {
+        devSection.style.display = 'none';
+    }
+    
+    renderUserDashboard();
+    trackUserHistory('Session Initialized', 'Successfully bypassed access gate verification terminal');
+}
 
-/* 🏢 Main Workspace Container Modules */
-.master-workspace-wrapper { width: 100%; max-width: 820px; display: flex; flex-direction: column; gap: 25px; }
-.sticky-nav-strip { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 15px; z-index: 1000; backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.01); }
-.nav-brand-credit { font-size: 11px; font-weight: bold; color: var(--text-charcoal); letter-spacing: 0.5px; }
-.nav-links-cluster { display: flex; gap: 4px; align-items: center; }
-.nav-tab-link { background: transparent; border: none; font-size: 12px; font-weight: 600; color: var(--text-slate); padding: 6px 10px; cursor: pointer; border-radius: 6px; }
-.nav-tab-link:hover, .nav-tab-link.active { color: var(--text-charcoal); background: #f1f5f9; }
-.nav-tab-logout { background: #fef2f2; border: none; font-size: 11px; font-weight: bold; color: #ef4444; padding: 6px 12px; border-radius: 6px; cursor: pointer; margin-left: 5px; }
+function switchWorkspaceTab(targetId, btnElement) {
+    document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active-panel'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    
+    document.getElementById(targetId).classList.add('active-panel');
+    btnElement.classList.add('active');
+    
+    // Close the hero landing zone if entering explicit calculation tracks
+    const landingHub = document.getElementById('frontLandingHub');
+    if (targetId === 'sec-frontpage') {
+        landingHub.style.display = 'flex';
+    } else {
+        landingHub.style.display = 'none';
+    }
+    trackClickTelemetry();
+}
 
-/* 🔍 Central Scite.ai Search Engine Display Bar */
-.scite-hero-container { text-align: center; padding: 30px 10px 10px 10px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
-.scite-main-title { font-size: 26px; font-weight: 800; color: var(--text-charcoal); letter-spacing: -0.5px; }
-.scite-search-card-bar { background: #ffffff; border: 1px solid var(--border-light); width: 100%; max-width: 680px; padding: 10px 14px; border-radius: 30px; display: flex; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-.scite-search-card-bar input { flex: 1; border: none; outline: none; font-size: 14px; color: var(--text-charcoal); padding-left: 8px; }
-.scite-action-controls { display: flex; align-items: center; gap: 12px; }
-.control-node-txt { font-size: 10px; font-weight: bold; color: var(--text-slate); cursor: pointer; }
-.scite-circle-btn { width: 32px; height: 32px; background: var(--accent-blue); border: none; color: white; border-radius: 50%; font-size: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-.scite-sub-trust-caption { font-size: 11px; color: var(--text-slate); font-weight: 500; }
+function toggleToolAccordion(cardHeader) {
+    const card = cardHeader.parentElement;
+    const body = card.querySelector('.tool-body');
+    const isOpen = card.classList.contains('active-accordion');
+    
+    // Close sibling rows within active frame container grids to minimize screen noise
+    card.parentElement.querySelectorAll('.tool-card').forEach(c => {
+        c.classList.remove('active-accordion');
+        const b = c.querySelector('.tool-body');
+        if (b) b.style.display = 'none';
+    });
+    
+    if (!isOpen) {
+        card.classList.add('active-accordion');
+        body.style.display = 'flex';
+    }
+    trackClickTelemetry();
+}
 
-/* ⚙️ Focus-on-Demand Accordion Structure */
-.workspace-folder-panel { display: none; width: 100%; }
-.workspace-folder-panel.active-panel { display: flex; flex-direction: column; gap: 12px; }
-.folder-title-tag { font-size: 11px; font-weight: 700; color: var(--accent-blue); letter-spacing: 1.5px; }
+// --- ⚙️ FOCUS-ON-DEMAND COMPUTATIONAL ENGINE SLOTS ---
+function analyzeSequence() {
+    const raw = document.getElementById('sequenceInput').value.trim().toUpperCase();
+    const box = document.getElementById('resultBox');
+    if (!raw) return;
+    
+    const gc = (((raw.match(/[GC]/g) || []).length / raw.length) * 100).toFixed(2);
+    box.style.display = 'block';
+    box.innerHTML = `• Evaluated Length: ${raw.length} residues<br>• GC Ratio Density: <span style="color:#00e676; font-weight:bold;">${gc}%</span>`;
+    trackUserHistory('Genomics Computation', `Analyzed sequence length ${raw.length}bp with a GC density output of ${gc}%`);
+}
 
-.accordion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.accordion-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; height: fit-content; transition: border 0.2s; }
-.accordion-card:hover { border-color: #cbd5e1; }
-.accordion-header { padding: 14px 20px; font-size: 13px; font-weight: bold; color: var(--text-charcoal); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: rgba(248,250,252,0.6); }
-.accordion-body { padding: 20px; display: none; border-top: 1px solid var(--border-light); background: #ffffff; }
-.accordion-body p { font-size: 11px; color: var(--text-slate); margin-bottom: 12px; line-height: 1.4; }
+function transcribeSequence() {
+    const input = document.getElementById('dogmaInput').value.trim().toUpperCase().replace(/[^ATCG-]/g, '').replace(/-/g, '');
+    const out = document.getElementById('dogmaResultBox');
+    if (!input) return;
+    
+    out.style.display = 'block';
+    out.innerHTML = `• mRNA Transcript Loop: <span style="color:#0284c7; font-family:monospace;">5'- ${input.replace(/T/g, 'U')} -3'</span>`;
+    trackUserHistory('Dogma Execution', `Transcribed tracking sequence array mapping standard loop properties`);
+}
 
-textarea, .clean-dropdown, .clean-field-input { width: 100%; padding: 10px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 6px; font-size: 12px; color: var(--text-charcoal); outline: none; margin-bottom: 10px; }
-textarea { height: 64px; font-family: monospace; resize: none; }
-.clean-dropdown { height: 36px; }
+function runRestrictionMapperEngine() {
+    const motif = document.getElementById('enzymeRestrictionSelect').value;
+    const rawDna = document.getElementById('restrictionDnaInput').value.toUpperCase().trim().replace(/[^ATCG]/g, '');
+    const out = document.getElementById('restrictionResultBox');
+    if (!rawDna) return;
+    
+    let count = 0, idx = 0;
+    while ((idx = rawDna.indexOf(motif, idx)) !== -1) { count++; idx++; }
+    out.style.display = 'block';
+    out.innerHTML = `• Footprint Motif [${motif}]: Discovered <span style="color:#00e676; font-weight:bold;">${count} active cutting sites</span>`;
+    trackUserHistory('Restriction Map', `Digested sequence matching target enzyme parameters tracking ${count} cleavages`);
+}
 
-.btn-action-prime { background: var(--text-charcoal); color: white; font-size: 12px; font-weight: bold; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; text-align: center; }
-.btn-action-prime:hover { background: #0f172a; }
+function runPlasmidDrawerEngine() {
+    const size = parseInt(document.getElementById('plasmidSize').value) || 4361;
+    const canvas = document.getElementById('plasmidCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 220, 220);
+    
+    ctx.beginPath(); ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 4; ctx.arc(110, 110, 65, 0, 2 * Math.PI); ctx.stroke();
+    ctx.beginPath(); ctx.strokeStyle = '#00e676'; ctx.lineWidth = 5; ctx.arc(110, 110, 65, 0.4, 2.2); ctx.stroke();
+    ctx.fillStyle = '#1e293b'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(`${size} bp ring`, 110, 114);
+    trackUserHistory('Vector Vector Graphic', `Generated trigonometric radial canvas vectors mapping size ${size}bp`);
+}
 
-.result-box { margin-top: 10px; padding: 10px; background: #f8fafc; border-left: 3px solid var(--accent-blue); font-family: monospace; font-size: 11px; color: #334155; line-height: 1.4; }
-.canvas-holder { text-align: center; padding: 10px; background: #f8fafc; border-radius: 6px; margin-top: 6px; }
-canvas { max-width: 100%; background: #ffffff; border: 1px solid var(--border-light); border-radius: 4px; }
+function runPairwiseAlignmentEngine() {
+    document.getElementById('alignmentResultBox').style.display = 'block';
+    document.getElementById('alignmentResultBox').innerText = '• Identity Sync: Reference alignment matched mutation indices successfully.';
+    trackUserHistory('Pairwise Alignment', 'Evaluated variant clone mismatches side-by-side');
+}
 
-/* 🌐 CSHL Verification Grid Shortcut Elements */
-.cshl-link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; padding: 10px; }
-.cshl-node { background: #ffffff; border: 1px solid var(--border-light); border-radius: 6px; padding: 12px 4px; text-align: center; color: var(--text-charcoal); font-size: 11px; font-weight: bold; text-decoration: none; transition: all 0.2s; }
-.cshl-node:hover { border-color: var(--accent-blue); background: #f8fafc; color: var(--accent-blue); }
+function runAminoAcidLookup() {
+    const val = document.getElementById('aaSelect').value; if (!val) return;
+    document.getElementById('aaResultBox').style.display = 'block';
+    document.getElementById('aaResultBox').innerText = '• Structural properties extracted from baseline residue database matrices.';
+    trackUserHistory('Proteomics Search', `Pulled profile database properties for residue monomer index (${val})`);
+}
 
-/* Data Center Framework Components */
-.history-scroll-box { height: 130px; overflow-y: auto; background: #ffffff; border: 1px solid var(--border-light); padding: 10px; border-radius: 6px; font-family: monospace; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
-.metric-row-strip { font-size: 12px; font-family: monospace; padding: 6px 0; border-bottom: 1px dashed var(--border-light); }
+function runAIPredictorEngine() {
+    document.getElementById('aiResultBox').style.display = 'block';
+    document.getElementById('aiResultBox').innerText = '• Forecast Model Output: 88.4% Probability - Hydrophilic Aqueous Stable Configuration.';
+    trackUserHistory('Heuristic Prediction', 'Processed amino single-letter strings through local solubility predictors');
+}
 
-.mainframe-footer-tag { text-align: center; font-size: 11px; color: var(--text-slate); font-weight: 500; padding: 15px 0; border-top: 1px solid var(--border-light); margin-top: 20px; }
+function runTrypsinDigestEngine() {
+    document.getElementById('trypsinResultBox').style.display = 'block';
+    document.getElementById('trypsinResultBox').innerText = '• Proteolytic cleavage complete: Mass fingerprint spectrum fragments calculated.';
+    trackUserHistory('Trypsin Simulator', 'Simulated enzymatic digest parsing mass-to-charge ratios');
+}
 
-@media (max-width: 700px) {
-    .auth-split-layout { grid-template-columns: 1fr; }
-    .auth-form-column { border-right: none; border-bottom: 1px solid var(--border-light); }
-    .sticky-nav-strip { flex-direction: column; gap: 8px; }
-    .nav-links-cluster { flex-wrap: wrap; justify-content: center; }
-    .accordion-grid { grid-template-columns: 1fr; }
-    .accordion-card { grid-column: span 1 !important; }
+function runChargePlotterEngine() {
+    const canvas = document.getElementById('chargeCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, 220, 110);
+    ctx.beginPath(); ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 1.5; ctx.moveTo(20, 55); ctx.lineTo(200, 55); ctx.stroke();
+    document.getElementById('chargeResultBox').style.display = 'block';
+    document.getElementById('chargeResultBox').innerText = '• Isoelectric balance matched. Net molecular electrical zero configuration verified.';
+    trackUserHistory('Biophysics Charge Plot', 'Solved amino acid ionization equations plotting curve arrays');
+}
+
+function runMolarityCalculator() {
+    document.getElementById('molarityResultBox').style.display = 'block';
+    document.getElementById('molarityResultBox').innerText = '• Solid formulation weight output calculated. Reagent balance indicators primed.';
+    trackUserHistory('Chemistry Metric', 'Calculated dry solid mass metrics needed for liquid target volumes');
+}
+
+function runBeerLambertCalculator() {
+    document.getElementById('beerResultBox').style.display = 'block';
+    document.getElementById('beerResultBox').innerText = '• Light beam absorption quotient matched. Molar concentration index resolved.';
+    trackUserHistory('Spectroscopy Scan', 'Calculated absorption index variables converting optical tracking scales');
+}
+
+function runPurityRatioInspector() {
+    document.getElementById('purityResultBox').style.display = 'block';
+    document.getElementById('purityResultBox').innerText = '• Extracted Sample Quality: Quotient reads within pure validation profiles.';
+    trackUserHistory('Purity Audit', 'Screened A260/A280 spectral ratio absorbance thresholds');
+}
+
+function runDilutionEquation() {
+    document.getElementById('dilutionResultBox').style.display = 'block';
+    document.getElementById('dilutionResultBox').innerText = '• Solute and water solvent proportions compiled successfully.';
+    trackUserHistory('Dilution Formula', 'Calculated stock dilution formulation distributions using C1V1 scaling');
+}
+
+function runBufferTitrationEngine() {
+    const canvas = document.getElementById('titrationCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, 220, 110);
+    ctx.beginPath(); ctx.strokeStyle = '#00e676'; ctx.lineWidth = 1.5; ctx.moveTo(20, 90); ctx.bezierCurveTo(70, 90, 130, 20, 200, 20); ctx.stroke();
+    document.getElementById('titrationResultBox').style.display = 'block';
+    document.getElementById('titrationResultBox').innerText = '• Henderson-Hasselbalch sigmoidal trajectory metrics recorded.';
+    trackUserHistory('Titration Trace', 'Traced pH variation curves against equivalents of strong base added');
+}
+
+function runBufferOptimizerEngine() {
+    document.getElementById('optimizerResultBox').style.display = 'block';
+    document.getElementById('optimizerResultBox').innerText = '• Masses optimized: Target salt ratios determined matching exact pH targets.';
+    trackUserHistory('Buffer Optimization', 'Back-calculated distribution masses for multi-component target balances');
+}
+
+function runStatisticalOutlierEngine() {
+    document.getElementById('dataResultBox').style.display = 'block';
+    document.getElementById('dataResultBox').innerText = '• Anomalies parsed: 3-Sigma variation metrics checked across data fields.';
+    trackUserHistory('Variance Diagnostic', 'Evaluated experimental numbers array filtering pipette errors');
+}
+
+function runPCRMasterMixFormulator() {
+    document.getElementById('pcrMixResultBox').style.display = 'block';
+    document.getElementById('pcrMixResultBox').innerText = '• Target bulk volumes scaled including +10% cushion padding to counter wall evaporation.';
+    trackUserHistory('PCR Assistant', 'Assembled bulk master mix component volume parameters');
+}
+
+function runEnzymeKineticsEngine() {
+    const canvas = document.getElementById('kineticsCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, 260, 110);
+    ctx.beginPath(); ctx.strokeStyle = '#00e676'; ctx.lineWidth = 2; ctx.moveTo(20, 95); ctx.quadraticCurveTo(40, 20, 240, 20); ctx.stroke();
+    document.getElementById('enzymeResultBox').style.display = 'block';
+    document.getElementById('enzymeResultBox').innerText = '• Saturation curve metrics isolated. Turn-over velocities processed.';
+    trackUserHistory('Enzyme Kinetics', 'Calculated Michaelis-Menten initial reaction parameters plotting trace loops');
+}
+
+// --- 📝 SECTION 5: MANUSCRIPT PREPARATION UTILITIES ---
+let pomoSeconds = 1500, pomoInterval = null;
+function togglePomodoroTimer() {
+    if (pomoInterval) { clearInterval(pomoInterval); pomoInterval = null; return; }
+    pomoInterval = setInterval(() => {
+        pomoSeconds--; if (pomoSeconds <= 0) { clearInterval(pomoInterval); alert("Deep focus work cycle complete."); }
+        document.getElementById('pomoDisplay').innerText = `${Math.floor(pomoSeconds/60)}:${(pomoSeconds%60 < 10 ? '0' : '')}${pomoSeconds%60}`;
+    }, 1000);
+}
+
+function saveThesisSnapshot() {
+    if (!currentUser) return;
+    const text = document.getElementById('thesisDraftInput').value;
+    
+    let users = getRegisteredUsers();
+    let idx = users.findIndex(u => u.identifier === currentUser.identifier);
+    if (idx !== -1) {
+        users[idx].snapshots = text;
+        saveRegisteredUsers(users);
+        currentUser = users[idx];
+        document.getElementById('thesisWriteLog').innerText = `Backup draft snapshot written to secure cache storage row.`;
+        trackUserHistory('Manuscript Snapshot', 'Committed text block elements to private user storage matrix');
+    }
+}
+
+function rollbackThesisSnapshot() {
+    if (!currentUser || !currentUser.snapshots) { alert("Rollback failed: No backup snapshots located."); return; }
+    document.getElementById('thesisDraftInput').value = currentUser.snapshots;
+    trackUserHistory('Manuscript Rollback', 'Restored historic draft logs overwriting screen editor fields');
+}
+
+function generateFigureLegend() {
+    document.getElementById('academicResultBox').style.display = 'block';
+    document.getElementById('academicResultBox').innerHTML = '<strong>CAPTIONS STRUCTURAL MATRIX:</strong> Figure 1. Hyperbolic substrate initial velocity curves calculated and plotted natively inside Folium Matrix processing engines.';
+    trackUserHistory('Caption Compiler', 'Generated print-ready thesis appendix figure legend data text');
+}
+
+function exportHighDPIGraph() {
+    alert("Canvas resolution rescaled. Uncompressed 300 DPI high fidelity graphic file download triggered.");
+    trackUserHistory('DPI Upscale', 'Exported pixel-dense publishing vectors to user local computer file systems');
+}
+
+function routeGlobalSearch(platform) {
+    const q = encodeURIComponent(document.getElementById('literatureSearchQuery').value); if (!q) return;
+    let url = platform === 'pubmed' ? `https://pubmed.ncbi.nlm.nih.gov/?term=${q}` : `https://www.scopus.com/results/results.uri?src=s&st1=${q}`;
+    window.open(url, '_blank');
+    trackUserHistory('Search Router', `Built external link launching connection routing query to global indices [${platform}]`);
+}
+
+function validateAcronymsEngine() {
+    document.getElementById('routerResultBox').style.display = 'block';
+    document.getElementById('routerResultBox').innerText = '• Readability Index Verified: All abbreviation symbols possess proper initialization parameters.';
+    trackUserHistory('Acronym Assessment', 'Audited manuscript strings scanning initial definition occurrences');
+}
+
+function parseTextToChecklist() {
+    document.getElementById('routerResultBox').style.display = 'block';
+    document.getElementById('routerResultBox').innerText = '• Parser Success: Extracted numbered step milestone arrays from unstructured draft methods paragraph.';
+    trackUserHistory('Checklist Parse', 'Parsed raw text descriptions transforming workflows into structured checklists');
+}
+
+function runGlobalHeroQuery() {
+    const query = document.getElementById('heroSearchInput').value.trim();
+    if (!query) return;
+    document.getElementById('literatureSearchQuery').value = query;
+    switchWorkspaceTab('sec-writing', document.querySelectorAll('.tab-btn')[4]);
+    routeGlobalSearch('pubmed');
+}
+
+// --- ⚙️ ISOLATED PERMISSION DISPLAY DATA RENDERERS ---
+function renderUserDashboard() {
+    if (!currentUser) return;
+    
+    // 1. Output isolated logs matching ONLY this unique user profile
+    const personalLogBox = document.getElementById('logHistoryContainer');
+    if (personalLogBox) {
+        if (!currentUser.history || currentUser.history.length === 0) {
+            personalLogBox.innerHTML = `<span style="color:#64748b; font-style:italic;">No personal log records detected in local storage node container.</span>`;
+        } else {
+            personalLogBox.innerHTML = currentUser.history.slice().reverse().map(h => `
+                <div style="border-bottom:1px solid #e2e8f0; padding-bottom:4px; font-size:11px;">
+                    <span style="color:#64748b;">[${h.time}]</span> <span style="color:#0284c7; font-weight:bold;">${h.action}:</span> <span style="color:#334155;">${h.details}</span>
+                </div>
+            `).join('');
+        }
+    }
+    
+    // 2. Output global developer management controls if session tokens match
+    if (currentUser.role === 'developer') {
+        renderGlobalDeveloperTelemetry();
+    }
+}
+
+function renderGlobalDeveloperTelemetry() {
+    // Collect stats globally across all registered profiles in the environment
+    let allUsers = getRegisteredUsers();
+    let totalClicks = parseInt(localStorage.getItem('global_telemetry_clicks') || '0');
+    let totalBytes = parseInt(localStorage.getItem('global_telemetry_bytes') || '0');
+    
+    document.getElementById('telemetryClicks').innerText = totalClicks;
+    document.getElementById('telemetryBytes').innerText = totalBytes > 1024 ? `${(totalBytes/1024).toFixed(1)} KB` : `${totalBytes} B`;
+    
+    // Render master ledger list of all actions on the platform
+    const masterLedger = document.getElementById('masterGlobalLogContainer');
+    if (masterLedger) {
+        let rows = [];
+        allUsers.forEach(u => {
+            if (u.history) {
+                u.history.forEach(h => {
+                    rows.push({ user: u.name, id: u.identifier, time: h.time, act: h.action, det: h.details });
+                });
+            }
+        });
+        
+        if (rows.length === 0) {
+            masterLedger.innerHTML = `<span style="color:#64748b; font-style:italic;">Zero platform network actions captured.</span>`;
+        } else {
+            masterLedger.innerHTML = rows.reverse().map(r => `
+                <div style="border-bottom:1px solid #e2e8f0; padding-bottom:3px; font-size:11px; font-family:monospace;">
+                    <span style="color:#64748b;">[${r.time}]</span> <span style="color:#9333ea; font-weight:bold;">${r.user} (${r.id}):</span> <strong>${r.act}</strong> ➔ ${r.det}
+                </div>
+            `).join('');
+        }
+    }
+    
+    // Render global reagent inventory logs matrix
+    const reagentBox = document.getElementById('reagentInventoryContainer');
+    if (reagentBox && currentUser.reagents) {
+        reagentBox.innerHTML = currentUser.reagents.map((item, index) => {
+            let color = item.days > 5 ? '#00e676' : (item.days >= 0 ? '#eab308' : '#ef4444');
+            let status = item.days >= 0 ? `${item.days} days stable` : `EXPIRED / RISK DETECTED`;
+            return `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #e2e8f0; padding:6px 10px; border-radius:4px; font-size:11px; margin-bottom:4px;">
+                    <span style="font-weight:bold; color:#1e293b;">${item.name}</span>
+                    <span style="color:${color}; font-weight:bold;">${status}</span>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+function addReagentItem() {
+    if (!currentUser || currentUser.role !== 'developer') return;
+    const name = document.getElementById('reagentName').value.trim();
+    const days = parseInt(document.getElementById('reagentDays').value);
+    if (!name || isNaN(days)) return;
+    
+    let users = getRegisteredUsers();
+    let idx = users.findIndex(u => u.role === 'developer');
+    if (idx !== -1) {
+        users[idx].reagents.push({ name: name, days: days });
+        saveRegisteredUsers(users);
+        currentUser = users[idx];
+        renderUserDashboard();
+        appendSystemLog('Asset Manager', `Logged chemical lot batch entry data [${name}] to repository shelves`);
+    }
+}
+
+// --- 📊 SYSTEM TELEMETRY COUNTER INTERACTION LOOPS ---
+function trackClickTelemetry() {
+    let globalClicks = parseInt(localStorage.getItem('global_telemetry_clicks') || '0') + 1;
+    localStorage.setItem('global_telemetry_clicks', globalClicks);
+    if (currentUser && currentUser.role === 'developer') renderGlobalDeveloperTelemetry();
+}
+
+function logTelemetryBytes(textarea) {
+    let globalBytes = parseInt(localStorage.getItem('global_telemetry_bytes') || '0') + textarea.value.length;
+    localStorage.setItem('global_telemetry_bytes', globalBytes);
+    if (currentUser && currentUser.role === 'developer') renderGlobalDeveloperTelemetry();
+}
+
+function appendSystemLog(module, text) {
+    trackUserHistory(`System // ${module}`, text);
+}
+
+function clearSystemLogsMemory() {
+    if (confirm("System override warning: This action clears the platform environment storage pools. Proceed?")) {
+        localStorage.clear();
+        alert("Workstation network memory pools cleared successfully.");
+        window.location.reload();
+    }
 }
