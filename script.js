@@ -1,263 +1,99 @@
-// --- 🔒 PERSISTENT MAIN ENTRY GATEWAY SIGN-ON LOOPS ---
-window.onload = function() {
-    initializeLocalReagents();
-    renderLogHistoryGrid();
-    updateTelemetryInterface();
-    
-    // Read local cache parameters to determine validation persistence status
-    if (localStorage.getItem('matrix_sso_session') === 'active') {
-        document.getElementById('loginGate').style.display = "none";
-        document.getElementById('workspaceWrapper').style.display = "flex";
-        appendAuditLog('SSO Auto Bypass', 'Bypassed authentication wall frame via valid memory storage keys');
-    }
-};
-
-function checkCredentials() {
-    const email = document.getElementById('gateEmail').value.trim();
-    const pass = document.getElementById('gatePass').value.trim();
-    const loginGate = document.getElementById('loginGate');
-    const workspace = document.getElementById('workspaceWrapper');
-
-    if (email === "tahasana@mj.edu" && pass === "admin123") {
-        localStorage.setItem('matrix_sso_session', 'active');
-        loginGate.style.display = "none";
-        workspace.style.display = "flex";
-        appendAuditLog('Gate Authorization', 'Workstation node cleared via credential validation handshake');
-    } else {
-        alert("Access Denied: Invalid security node token.");
-    }
+/* --- PREMIUM "WARM DAYLIGHT" MINIMALIST DESIGN FRAMEWORK --- */
+:root {
+    --daylight-bg: radial-gradient(circle at center, #ffffff 0%, #fffbf2 50%, #f3f9f5 100%);
+    --text-charcoal: #1e293b;
+    --text-slate: #64748b;
+    --accent-blue: #2563eb;
+    --border-light: #e2e8f0;
+    --card-bg: rgba(255, 255, 255, 0.85);
 }
 
-// --- 📂 HORIZONTAL MAIN HEADER TAB MANAGER NAVIGATION ROUTER ---
-function switchMainframeTab(targetPanelId, triggerButton) {
-    // Collect all layout panels across workspace frames and toggle visibility parameters
-    const panels = document.querySelectorAll('.tab-content-panel');
-    panels.forEach(p => p.classList.remove('active-panel'));
-    document.getElementById(targetPanelId).classList.add('active-panel');
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+body { background: var(--daylight-bg); color: var(--text-charcoal); display: flex; justify-content: center; min-height: 100vh; padding: 20px; }
 
-    // Sync structural classes across menu navigation target loops
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs.forEach(t => t.classList.remove('active'));
-    triggerButton.classList.add('active');
-}
+/* 🔒 Split Panel Entrance Gate Architecture */
+.auth-gate-container { width: 100%; max-width: 820px; margin-top: 6vh; display: flex; flex-direction: column; gap: 20px; }
+.auth-split-layout { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 16px; display: grid; grid-template-columns: 45% 55%; backdrop-filter: blur(8px); overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.02); }
 
-// --- 📊 OPERATIONAL METRICS MONITOR SYSTEM LEDGER (APPEND-ONLY CONTROLLER) ---
-function appendAuditLog(actionName, shortResult) {
-    let logs = JSON.parse(localStorage.getItem('matrix_audit_ledger') || '[]');
-    const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    logs.push({ time: timestamp, action: actionName, summary: shortResult });
-    localStorage.setItem('matrix_audit_ledger', JSON.stringify(logs));
-    renderLogHistoryGrid();
-}
+.auth-form-column { padding: 40px; border-right: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 20px; }
+.auth-toggle-headers { display: flex; gap: 15px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px; }
+.auth-tab-btn { background: transparent; border: none; font-size: 14px; font-weight: bold; color: var(--text-slate); cursor: pointer; padding-bottom: 4px; }
+.auth-tab-btn.active { color: var(--accent-blue); border-bottom: 2px solid var(--accent-blue); }
 
-function renderLogHistoryGrid() {
-    const container = document.getElementById('logHistoryContainer');
-    let logs = JSON.parse(localStorage.getItem('matrix_audit_ledger') || '[]');
-    if (logs.length === 0) {
-        container.innerHTML = `<span style="color:#64748b; font-style:italic;">No calculation log records detected in local storage node container.</span>`;
-        return;
-    }
-    container.innerHTML = logs.reverse().map(l => `
-        <div style="border-bottom:1px solid #1e293b; padding-bottom:3px;">
-            <span style="color:#64748b;">[${l.time}]</span> <span style="color:#00ff88;">${l.action}:</span> ${l.summary}
-        </div>
-    `).join('');
-}
+.auth-fields-stack { display: flex; flex-direction: column; gap: 12px; }
+.auth-fields-stack input { width: 100%; padding: 12px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; outline: none; font-size: 13px; color: var(--text-charcoal); }
+.auth-fields-stack input:focus { border-color: var(--accent-blue); }
 
-function clearSystemLogsMemory() {
-    localStorage.clear();
-    alert("Local storage memory states overwritten successfully.");
-    window.location.reload();
-}
+/* Password Strength Indicator Line */
+.strength-gauge-wrapper { width: 100%; height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
+.strength-bar { height: 100%; width: 0%; transition: all 0.3s ease; background: #ef4444; }
 
-// --- 📊 BACKGROUND LIVE SYSTEM TELEMETRY HARNESS ---
-function trackClick() {
-    let clicks = parseInt(localStorage.getItem('telemetry_click_count') || '0') + 1;
-    localStorage.setItem('telemetry_click_count', clicks);
-    updateTelemetryInterface();
-}
-function logTelemetryBytes(textareaElement) {
-    let baseBytes = parseInt(localStorage.getItem('telemetry_byte_processed') || '0');
-    localStorage.setItem('telemetry_byte_processed', baseBytes + textareaElement.value.length);
-    updateTelemetryInterface();
-}
-function updateTelemetryInterface() {
-    document.getElementById('telemetryClicks').innerText = localStorage.getItem('telemetry_click_count') || '0';
-    let currentBytes = parseInt(localStorage.getItem('telemetry_byte_processed') || '0');
-    document.getElementById('telemetryBytes').innerText = currentBytes > 1024 ? `${(currentBytes/1024).toFixed(1)} KB` : `${currentBytes} B`;
-}
+.auth-info-column { padding: 40px; background: rgba(248, 250, 252, 0.5); display: flex; flex-direction: column; gap: 20px; }
+.info-grid-headline { font-size: 11px; font-weight: bold; color: var(--accent-blue); letter-spacing: 1.5px; text-transform: uppercase; }
+.capability-preview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+.capability-node h3 { font-size: 13px; color: var(--text-charcoal); margin-bottom: 3px; }
+.capability-node p { font-size: 11px; color: var(--text-slate); line-height: 1.4; }
 
-// --- 🌡️ LIVE SECTION 7 REAGENT ASSETS MANAGEMENT TRACKER ---
-function initializeLocalReagents() {
-    let items = JSON.parse(localStorage.getItem('reagent_inventory') || '[]');
-    if (items.length === 0) {
-        items = [
-            { name: "Active Taq DNA Polymerase Store", days: 12 },
-            { name: "10X Reagent Master Mix stock Buffer", days: -1 }
-        ];
-        localStorage.setItem('reagent_inventory', JSON.stringify(items));
-    }
-    renderReagentsShelf();
-}
-function addReagentItem() {
-    const name = document.getElementById('reagentName').value.trim();
-    const days = parseInt(document.getElementById('reagentDays').value);
-    if (!name || isNaN(days)) return;
-    let items = JSON.parse(localStorage.getItem('reagent_inventory') || '[]');
-    items.push({ name: name, days: days });
-    localStorage.setItem('reagent_inventory', JSON.stringify(items));
-    renderReagentsShelf();
-}
-function renderReagentsShelf() {
-    const container = document.getElementById('reagentInventoryContainer');
-    let items = JSON.parse(localStorage.getItem('reagent_inventory') || '[]');
-    container.innerHTML = items.map(item => {
-        let color = item.days > 5 ? '#00ff88' : (item.days >= 0 ? '#eab308' : '#ef4444');
-        let txt = item.days >= 0 ? `${item.days} days stable` : `EXPIRED / CONTAMINATION RISK`;
-        return `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:#020617; border:1px solid #1e293b; padding:6px 10px; border-radius:4px; font-size:11px;">
-                <span style="font-weight:bold; color:white;">${item.name}</span>
-                <span style="color:${color}; font-weight:bold; font-family:monospace;">${txt}</span>
-            </div>
-        `;
-    }).join('');
-}
+.auth-footer-notice { text-align: center; font-size: 11px; color: var(--text-slate); padding: 10px; line-height: 1.4; }
 
-// --- 📁 SECTION 1 COMPUTATIONAL BIOLOGY CALCULATORS ---
-function analyzeSequence() {
-    const raw = document.getElementById('sequenceInput').value.trim().toUpperCase(); const box = document.getElementById('resultBox'); if (!raw) return;
-    const gc = (((raw.match(/[GC]/g) || []).length / raw.length) * 100).toFixed(2);
-    box.style.display = "block"; box.innerHTML = `• Total Length: ${raw.length} bp<br>• GC Ratio content: <span style="color:#00ff88; font-weight:bold;">${gc}%</span>`;
-    appendAuditLog('GC Content Engine', `Parsed nucleotide string length ${raw.length} yielding match coefficient ${gc}%`);
-}
-function transcribeSequence() {
-    const input = document.getElementById('dogmaInput').value.trim().toUpperCase().replace(/[^ATCG-]/g, '').replace(/-/g, '');
-    const out = document.getElementById('dogmaResultBox'); if (!input) return;
-    out.style.display = "block"; out.innerHTML = `• Synthesized mRNA Loop: <span style="color:#06b6d4;">5'- ${input.replace(/T/g, 'U')} -3'</span>`;
-    appendAuditLog('Central Dogma', `Transcribed string loop structure length ${input.length} into active messenger strands`);
-}
-function runRestrictionMapperEngine() {
-    const motif = document.getElementById('enzymeRestrictionSelect').value;
-    const rawDna = document.getElementById('restrictionDnaInput').value.toUpperCase().trim().replace(/[^ATCG]/g, '');
-    const out = document.getElementById('restrictionResultBox'); if (!rawDna) return;
-    let count = 0, idx = 0; while ((idx = rawDna.indexOf(motif, idx)) !== -1) { count++; idx++; }
-    out.style.display = "block"; out.innerHTML = `• Targets Found: <span style="color:#00ff88; font-weight:bold;">${count} cut sites</span>`;
-    appendAuditLog('Restriction Digest', `Parsed restriction cleavage footprints for motif [${motif}] hitting count ${count}`);
-}
-function runPlasmidDrawerEngine() {
-    const size = parseInt(document.getElementById('plasmidSize').value) || 4361;
-    const canvas = document.getElementById('plasmidCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0,0,220,220);
-    ctx.beginPath(); ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 5; ctx.arc(110,110,70,0,2*Math.PI); ctx.stroke();
-    ctx.beginPath(); ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 5; ctx.arc(110,110,70,0.5,2.5); ctx.stroke();
-    ctx.fillStyle = 'white'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(`${size} bp ring`, 110, 114);
-    appendAuditLog('Vector Drawer', `Rendered radial vector maps structural rings profiling baseline length ${size} bp`);
-}
-function runPairwiseAlignmentEngine() {
-    const out = document.getElementById('alignmentResultBox'); out.style.display = "block";
-    out.innerHTML = `• Alignment Sync successful. Mutation parameters audited cleanly.`;
-    appendAuditLog('Pairwise Alignment', `Calculated variance matching thresholds comparing target sample variations`);
-}
+/* 🏢 Main Workspace Container Modules */
+.master-workspace-wrapper { width: 100%; max-width: 820px; display: flex; flex-direction: column; gap: 25px; }
+.sticky-nav-strip { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 15px; z-index: 1000; backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.01); }
+.nav-brand-credit { font-size: 11px; font-weight: bold; color: var(--text-charcoal); letter-spacing: 0.5px; }
+.nav-links-cluster { display: flex; gap: 4px; align-items: center; }
+.nav-tab-link { background: transparent; border: none; font-size: 12px; font-weight: 600; color: var(--text-slate); padding: 6px 10px; cursor: pointer; border-radius: 6px; }
+.nav-tab-link:hover, .nav-tab-link.active { color: var(--text-charcoal); background: #f1f5f9; }
+.nav-tab-logout { background: #fef2f2; border: none; font-size: 11px; font-weight: bold; color: #ef4444; padding: 6px 12px; border-radius: 6px; cursor: pointer; margin-left: 5px; }
 
-// --- 📁 SECTION 2 & 3 PROTEOMICS & ANALYTICAL CHEMISTRY SYSTEMS ---
-function runAminoAcidLookup() {
-    const val = document.getElementById('aaSelect').value; if (!val) return;
-    document.getElementById('aaResultBox').style.display = "block"; document.getElementById('aaResultBox').innerHTML = `• Residue database properties loaded successfully into mainframe buffer space.`;
-    appendAuditLog('Amino Profile', `Extracted molecular nomenclature structural mass data weights for monomer (${val})`);
-}
-function runAIPredictorEngine() {
-    document.getElementById('aiResultBox').style.display = "block"; document.getElementById('aiResultBox').innerHTML = `• Forecast Result: Hydrophilic layer aqueous solution configuration confirmed.`;
-    appendAuditLog('Heuristic Predictor', `Pushed single-letter sequence string loops through local solubility models`);
-}
-function runTrypsinDigestEngine() {
-    document.getElementById('trypsinResultBox').style.display = "block"; document.getElementById('trypsinResultBox').innerHTML = `• Cleavage Map completed: Trypsin fragment monoisotopic peak spectrum arrays generated.`;
-    appendAuditLog('Trypsin Digest', `Executed proteolytic cuts parsing fingerprint spectra mass weights`);
-}
-function runChargePlotterEngine() {
-    const canvas = document.getElementById('chargeCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0,0,220,110);
-    ctx.beginPath(); ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 1.5; ctx.moveTo(20,55); ctx.lineTo(200,55); ctx.stroke();
-    document.getElementById('chargeResultBox').style.display = "block"; document.getElementById('chargeResultBox').innerHTML = `• Continuous electrical tracking finished. Calculated Isoelectric Point (pI) centered.`;
-    appendAuditLog('Peptide Charge Plot', `Traced sidechain ionization balances down the electrical gradient curves`);
-}
-function runMolarityCalculator() {
-    document.getElementById('molarityResultBox').style.display = "block"; document.getElementById('molarityResultBox').innerHTML = `• Aliquot Weight calculated. Target dry reagent balance limits locked.`;
-    appendAuditLog('Molarity mass', `Calculated solid gram mass requirements for solution targets`);
-}
-function runBeerLambertCalculator() {
-    document.getElementById('beerResultBox').style.display = "block"; document.getElementById('beerResultBox').innerHTML = `• Absorbed light quotient resolved. Target solution concentration calculated.`;
-    appendAuditLog('Beer Absorption', `Resolved light spectrum attenuation profiles computing molar concentration scales`);
-}
-function runPurityRatioInspector() {
-    document.getElementById('purityResultBox').style.display = "block"; document.getElementById('purityResultBox').innerHTML = `• Optical density quotient reads within target purity specifications bounds.`;
-    appendAuditLog('Quality Assurance', `Executed extraction spectral purity evaluations on isolating variables`);
-}
-function runDilutionEquation() {
-    document.getElementById('dilutionResultBox').style.display = "block"; document.getElementById('dilutionResultBox').innerHTML = `• Diluent formulation ratios locked. Adjust pipette balances accordingly.`;
-    appendAuditLog('Dilution Mixer', `Solved C1V1 proportional balance volume targets`);
-}
-function runBufferTitrationEngine() {
-    const canvas = document.getElementById('titrationCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0,0,220,110);
-    ctx.beginPath(); ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 1.5; ctx.moveTo(20,90); ctx.bezierCurveTo(80,90,140,20,200,20); ctx.stroke();
-    document.getElementById('titrationResultBox').style.display = "block"; document.getElementById('titrationResultBox').innerHTML = `• Equilibrium state plotted down the Henderson-Hasselbalch sigmoidal threshold bounds.`;
-    appendAuditLog('Titration Sim', `Mapped weak acid dissociation trajectories using dynamic coordinate sets`);
-}
-function runBufferOptimizerEngine() {
-    document.getElementById('optimizerResultBox').style.display = "block"; document.getElementById('optimizerResultBox').innerHTML = `• Recipe optimized: Precision dry components weights computed to hit fixed pH exactly.`;
-    appendAuditLog('Recipe Optimizer', `Back-calculated separate acid and conjugate base distribution proportions`);
-}
+/* 🔍 Central Scite.ai Search Engine Display Bar */
+.scite-hero-container { text-align: center; padding: 30px 10px 10px 10px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
+.scite-main-title { font-size: 26px; font-weight: 800; color: var(--text-charcoal); letter-spacing: -0.5px; }
+.scite-search-card-bar { background: #ffffff; border: 1px solid var(--border-light); width: 100%; max-width: 680px; padding: 10px 14px; border-radius: 30px; display: flex; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+.scite-search-card-bar input { flex: 1; border: none; outline: none; font-size: 14px; color: var(--text-charcoal); padding-left: 8px; }
+.scite-action-controls { display: flex; align-items: center; gap: 12px; }
+.control-node-txt { font-size: 10px; font-weight: bold; color: var(--text-slate); cursor: pointer; }
+.scite-circle-btn { width: 32px; height: 32px; background: var(--accent-blue); border: none; color: white; border-radius: 50%; font-size: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+.scite-sub-trust-caption { font-size: 11px; color: var(--text-slate); font-weight: 500; }
 
-// --- 📁 SECTION 4 & 5 ASSAY STATS & MANUSCRIPT MANIPULATORS ---
-function runStatisticalOutlierEngine() {
-    document.getElementById('dataResultBox').style.display = "block"; document.getElementById('dataResultBox').innerHTML = `• Anomaly diagnostics complete: Continuous 3-Sigma standard deviation loops verified stable.`;
-    appendAuditLog('Outlier Track', `Executed population array statistical variance anomaly checks`);
-}
-function runPCRMasterMixFormulator() {
-    document.getElementById('pcrMixResultBox').style.display = "block"; document.getElementById('pcrMixResultBox').innerHTML = `• Volume multi-scaling finalized including a +10% wall evaporation pipetting buffer.`;
-    appendAuditLog('PCR Formulator', `Scaled micro-reagent quantities to handle automated batch reactions`);
-}
-function runEnzymeKineticsEngine() {
-    const canvas = document.getElementById('kineticsCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0,0,260,110);
-    ctx.beginPath(); ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2; ctx.moveTo(20,95); ctx.quadraticCurveTo(40,20,240,20); ctx.stroke();
-    document.getElementById('enzymeResultBox').style.display = "block"; document.getElementById('enzymeResultBox').innerHTML = `• Initial Saturation velocity curves generated across structural display viewports.`;
-    appendAuditLog('Enzyme kinetics', `Mapped hyperbolic velocities tracks detailing maximum turnover outputs`);
-}
+/* ⚙️ Focus-on-Demand Accordion Structure */
+.workspace-folder-panel { display: none; width: 100%; }
+.workspace-folder-panel.active-panel { display: flex; flex-direction: column; gap: 12px; }
+.folder-title-tag { font-size: 11px; font-weight: 700; color: var(--accent-blue); letter-spacing: 1.5px; }
 
-let pomoSecs = 1500, pomoInt = null;
-function togglePomodoroTimer() {
-    if (pomoInt) { clearInterval(pomoInt); pomoInt = null; return; }
-    pomoInt = setInterval(() => {
-        pomoSecs--; if (pomoSecs<=0) { clearInterval(pomoInt); alert("Deep focus block completed."); }
-        document.getElementById('pomoDisplay').innerText = `${Math.floor(pomoSecs/60)}:${(pomoSecs%60 < 10 ? '0' : '')}${pomoSecs%60}`;
-    }, 1000);
-}
-function saveThesisSnapshot() {
-    localStorage.setItem('thesis_draft_snapshot', document.getElementById('thesisDraftInput').value);
-    document.getElementById('thesisWriteLog').innerText = `Backup draft snapshot written to browser cache.`;
-    appendAuditLog('Thesis Backup', 'Committed draft document string structures to local storage container blocks');
-}
-function rollbackThesisSnapshot() {
-    const saved = localStorage.getItem('thesis_draft_snapshot'); if (saved) document.getElementById('thesisDraftInput').value = saved;
-    appendAuditLog('Thesis Rollback', 'Executed document history rollback restoring historic manuscript draft elements');
-}
-function generateFigureLegend() {
-    document.getElementById('academicResultBox').style.display = "block";
-    document.getElementById('academicResultBox').innerHTML = `<strong>FIGURE 1 CAPTION:</strong> Hyperbolic initial velocity processing saturation paths charting kinetics boundaries calculations checked inside Folium Matrix engines.`;
-    appendAuditLog('Legend Generate', 'Compiled standardized figure caption text structures matching publication layout constraints');
-}
-function exportHighDPIGraph() {
-    alert("Upscale processing finalized. High resolution uncompressed document figure download file pushed to browser.");
-    appendAuditLog('DPI Rescale', 'Upscaled current workspace canvas visual traces into true 300 DPI layout graphics');
-}
-function routeGlobalSearch(dbKey) {
-    const query = encodeURIComponent(document.getElementById('literatureSearchQuery').value); if (!query) return;
-    let endpoint = dbKey === 'pubmed' ? `https://pubmed.ncbi.nlm.nih.gov/?term=${query}` : `https://www.scopus.com/results/results.uri?src=s&st1=${query}`;
-    window.open(endpoint, '_blank');
-    appendAuditLog('Search Router', `Built deep-link target URL redirecting user to global resource [${dbKey}]`);
-}
-function validateAcronymsEngine() {
-    document.getElementById('routerResultBox').style.display = "block"; document.getElementById('routerResultBox').innerHTML = `• Readability Assessment: Abbreviations arrays verified cleanly defined matching initial presentations.`;
-    appendAuditLog('Acronym Check', 'Executed manuscript spelling abbreviation and acronym compliance audits');
-}
-function parseTextToChecklist() {
-    document.getElementById('routerResultBox').style.display = "block"; document.getElementById('routerResultBox').innerHTML = `• Technical Checklist: Extracted step-by-step bench sequence numbers items from draft methodology text.`;
-    appendAuditLog('Checklist Parse', 'Parsed unstructured experimental paragraphs into manageable laboratory checklists');
+.accordion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.accordion-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; height: fit-content; transition: border 0.2s; }
+.accordion-card:hover { border-color: #cbd5e1; }
+.accordion-header { padding: 14px 20px; font-size: 13px; font-weight: bold; color: var(--text-charcoal); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: rgba(248,250,252,0.6); }
+.accordion-body { padding: 20px; display: none; border-top: 1px solid var(--border-light); background: #ffffff; }
+.accordion-body p { font-size: 11px; color: var(--text-slate); margin-bottom: 12px; line-height: 1.4; }
+
+textarea, .clean-dropdown, .clean-field-input { width: 100%; padding: 10px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 6px; font-size: 12px; color: var(--text-charcoal); outline: none; margin-bottom: 10px; }
+textarea { height: 64px; font-family: monospace; resize: none; }
+.clean-dropdown { height: 36px; }
+
+.btn-action-prime { background: var(--text-charcoal); color: white; font-size: 12px; font-weight: bold; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; text-align: center; }
+.btn-action-prime:hover { background: #0f172a; }
+
+.result-box { margin-top: 10px; padding: 10px; background: #f8fafc; border-left: 3px solid var(--accent-blue); font-family: monospace; font-size: 11px; color: #334155; line-height: 1.4; }
+.canvas-holder { text-align: center; padding: 10px; background: #f8fafc; border-radius: 6px; margin-top: 6px; }
+canvas { max-width: 100%; background: #ffffff; border: 1px solid var(--border-light); border-radius: 4px; }
+
+/* 🌐 CSHL Verification Grid Shortcut Elements */
+.cshl-link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; padding: 10px; }
+.cshl-node { background: #ffffff; border: 1px solid var(--border-light); border-radius: 6px; padding: 12px 4px; text-align: center; color: var(--text-charcoal); font-size: 11px; font-weight: bold; text-decoration: none; transition: all 0.2s; }
+.cshl-node:hover { border-color: var(--accent-blue); background: #f8fafc; color: var(--accent-blue); }
+
+/* Data Center Framework Components */
+.history-scroll-box { height: 130px; overflow-y: auto; background: #ffffff; border: 1px solid var(--border-light); padding: 10px; border-radius: 6px; font-family: monospace; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
+.metric-row-strip { font-size: 12px; font-family: monospace; padding: 6px 0; border-bottom: 1px dashed var(--border-light); }
+
+.mainframe-footer-tag { text-align: center; font-size: 11px; color: var(--text-slate); font-weight: 500; padding: 15px 0; border-top: 1px solid var(--border-light); margin-top: 20px; }
+
+@media (max-width: 700px) {
+    .auth-split-layout { grid-template-columns: 1fr; }
+    .auth-form-column { border-right: none; border-bottom: 1px solid var(--border-light); }
+    .sticky-nav-strip { flex-direction: column; gap: 8px; }
+    .nav-links-cluster { flex-wrap: wrap; justify-content: center; }
+    .accordion-grid { grid-template-columns: 1fr; }
+    .accordion-card { grid-column: span 1 !important; }
 }
