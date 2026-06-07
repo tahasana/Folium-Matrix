@@ -1,4 +1,4 @@
-/* --- PREMIUM BIOLUMINESCENT DESIGN SYSTEM --- */
+/* --- PREMIUM BIOLUMINESCENT NAVIGATION DESIGN SYSTEM --- */
 :root {
     --bg-canvas: #0b0f19;      /* Deep Midnight Sapphire */
     --card-bg: #111827;        /* Core Dark Gray */
@@ -13,12 +13,12 @@ body {
     color: var(--text-main); 
     display: flex; 
     justify-content: center; 
-    align-items: center; 
+    align-items: flex-start; 
     min-height: 100vh;
     padding: 20px;
 }
 
-/* 🔒 Secure Gateway Card Panel */
+/* 🔒 Secure Gateway Authentication Card Box */
 .gate-card {
     background: var(--card-bg);
     border: 2px solid var(--border-matrix);
@@ -27,10 +27,11 @@ body {
     width: 100%;
     max-width: 400px;
     text-align: center;
+    margin-top: 10vh;
     box-shadow: 0 10px 40px rgba(0, 255, 136, 0.03);
 }
-.gate-card h1 { font-size: 28px; color: var(--accent-glow); margin-bottom: 4px; letter-spacing: 1px; }
-.gate-card p { color: #94a3b8; font-size: 11px; margin-bottom: 25px; letter-spacing: 2px; }
+.gate-card h1 { font-size: 26px; color: var(--accent-glow); margin-bottom: 4px; letter-spacing: 1px; }
+.gate-card p { color: #94a3b8; font-size: 10px; margin-bottom: 25px; letter-spacing: 2px; }
 .gate-card input { 
     width: 100%; padding: 12px; background: var(--bg-canvas); 
     border: 2px solid var(--border-matrix); border-radius: 6px; 
@@ -38,80 +39,103 @@ body {
 }
 .gate-card input:focus { border-color: var(--accent-glow); }
 
-/* Workspace Folder Components */
-.section-block {
+/* 🧬 Tab Header Navigation Control Elements */
+.workspace-wrapper {
     display: flex;
     flex-direction: column;
     gap: 20px;
     width: 100%;
-    border-top: 1px dashed #1e293b;
-    padding-top: 20px;
+    max-width: 750px;
 }
-.section-header {
-    font-size: 11px;
-    font-weight: bold;
-    color: #06b6d4;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 5px;
-    background: #020617;
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: 1px solid #1e293b;
-    width: fit-content;
+.mainframe-nav-header {
+    background: var(--card-bg);
+    border: 2px solid var(--border-matrix);
+    border-radius: 8px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
+.nav-brand { font-family: monospace; font-weight: bold; color: var(--accent-glow); font-size: 14px; letter-spacing: 1px; }
+.nav-tabs { display: flex; gap: 5px; }
+.tab-btn {
+    background: transparent; border: none; color: #94a3b8; padding: 6px 12px;
+    font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: all 0.2s;
+}
+.tab-btn:hover { color: white; background: #1e293b; }
+.tab-btn.active { color: #020617; background: var(--accent-glow); }
 
+/* Initial Welcome Dashboard Canvas Panel */
+.terminal-welcome-banner {
+    background: #020617; border: 1px solid var(--border-matrix); border-radius: 6px;
+    padding: 15px 20px; border-left: 4px solid #06b6d4;
+}
+.terminal-welcome-banner h2 { font-size: 13px; color: white; letter-spacing: 0.5px; margin-bottom: 3px; }
+.terminal-welcome-banner p { font-size: 11px; color: #64748b; font-family: monospace; }
+
+/* Dynamic Tab Visibility Controller Switches */
+.tab-content-panel { display: none; width: 100%; animation: fadeEffect 0.3s ease-in-out; }
+.tab-content-panel.active-panel { display: flex; flex-direction: column; gap: 15px; }
+@keyframes fadeEffect { from { opacity: 0; } to { opacity: 1; } }
+
+.section-folder-tag { font-size: 11px; font-weight: bold; color: #06b6d4; letter-spacing: 1.5px; margin-left: 5px; }
+
+/* 🗂️ Side-by-Side Compact Multi-Grid Layout Frame */
+.tools-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
 .tool-card {
-    background: var(--card-bg); 
-    border: 2px solid var(--border-matrix); 
-    border-radius: 12px;
-    padding: 30px; 
-    width: 100%;
-    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.01);
+    background: var(--card-bg); border: 2px solid var(--border-matrix); border-radius: 10px; padding: 20px;
+    display: flex; flex-direction: column;
 }
-.tool-card h1 { color: var(--accent-glow); margin-bottom: 6px; font-size: 18px; }
-.tool-card p { color: #94a3b8; font-size: 12px; margin-bottom: 18px; }
+.tool-card h1 { color: var(--accent-glow); font-size: 15px; margin-bottom: 4px; }
+.tool-card p { color: #94a3b8; font-size: 11px; margin-bottom: 12px; line-height: 1.4; }
 
-textarea, select {
-    width: 100%; height: 80px; padding: 12px; background: var(--bg-canvas);
+textarea {
+    width: 100%; height: 70px; padding: 10px; background: var(--bg-canvas);
     border: 2px solid var(--border-matrix); border-radius: 6px;
-    color: white; font-family: monospace; font-size: 13px; outline: none; resize: none; margin-bottom: 15px;
+    color: white; font-family: monospace; font-size: 12px; outline: none; resize: none; margin-bottom: 10px;
 }
-select { height: 44px; font-family: 'Segoe UI', sans-serif; }
-textarea:focus, select:focus { border-color: var(--accent-glow); }
+textarea:focus { border-color: var(--accent-glow); }
 
 .btn-glow {
-    padding: 12px 24px; background: var(--accent-glow); color: #020617;
-    border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;
+    padding: 10px 16px; background: var(--accent-glow); color: #020617;
+    border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-align: center;
 }
 .btn-glow:hover { background: #00cc6c; }
 
 .result-box {
-    margin-top: 20px; padding: 15px; background: var(--bg-canvas);
-    border: 1px solid var(--border-matrix); border-left: 4px solid var(--accent-glow);
-    border-radius: 4px; font-family: monospace; font-size: 13px; display: none; line-height: 1.6;
+    margin-top: 12px; padding: 10px; background: var(--bg-canvas);
+    border: 1px solid var(--border-matrix); border-left: 3px solid var(--accent-glow);
+    border-radius: 4px; font-family: monospace; font-size: 12px; display: none; line-height: 1.5; color: #cbd5e1;
 }
 
-/* 🌐 Clickable Reference Matrix Grid */
+/* 🌐 CSHL Shortcut Icon Grid Matrix */
 .cshl-link-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px;
 }
 .cshl-node {
-    background: #020617;
-    border: 1px solid #1e293b;
-    border-radius: 4px;
-    padding: 12px 6px;
-    text-align: center;
-    color: #cbd5e1;
-    font-size: 11px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: all 0.2s;
+    background: #020617; border: 1px solid var(--border-matrix); border-radius: 4px;
+    padding: 10px 4px; text-align: center; color: #94a3b8; font-size: 11px; font-weight: bold; text-decoration: none;
 }
-.cshl-node:hover {
-    border-color: #06b6d4;
-    color: #00ff88;
-    background: #0b0f19;
+.cshl-node:hover { border-color: #06b6d4; color: var(--accent-glow); background: #0b0f19; }
+
+/* Append-Only Ledger History Scroll Tray Container */
+.ledger-scroll-box {
+    background: #020617; border: 1px solid var(--border-matrix); border-radius: 6px;
+    padding: 10px; height: 120px; overflow-y: auto; font-family: monospace; font-size: 11px;
+    display: flex; flex-direction: column; gap: 5px;
+}
+
+/* Responsive collapse properties matching phone scaling footprints */
+@media (max-width: 650px) {
+    .tools-grid-layout { grid-template-columns: 1fr; }
+    .mainframe-nav-header { flex-direction: column; gap: 10px; }
+    .nav-tabs { flex-wrap: wrap; justify-content: center; }
 }
