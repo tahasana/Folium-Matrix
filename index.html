@@ -1,403 +1,386 @@
-// --- 🔒 CENTRAL SECURITY HANDSHAKE GATEWAY ---
-function checkCredentials() {
-    const email = document.getElementById('gateEmail').value.trim();
-    const pass = document.getElementById('gatePass').value.trim();
-    const loginGate = document.getElementById('loginGate');
-    const workspace = document.getElementById('workspaceWrapper');
-    if (email === "tahasana@mj.edu" && pass === "admin123") { loginGate.style.display = "none"; workspace.style.display = "flex"; } 
-    else { alert("Access Denied: Invalid security node token."); }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folium Matrix - Core Mainframe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// --- TOOL #1 ENGINE ---
-function analyzeSequence() {
-    const rawInput = document.getElementById('sequenceInput').value.trim().toUpperCase();
-    const resultBox = document.getElementById('resultBox');
-    if (!rawInput) { alert("Please enter a sequence matrix first."); return; }
-    const totalLength = rawInput.length;
-    const gcCount = (rawInput.match(/[GC]/g) || []).length;
-    const gcPercentage = ((gcCount / totalLength) * 100).toFixed(2);
-    resultBox.style.display = "block";
-    resultBox.innerHTML = `<strong style="color: #00ff88;">ANALYSIS LOG MATRICES:</strong><br>-----------------------------------<br>• Total Sequence Length: ${totalLength} residues<br>• Total G/C Nucleotides: ${gcCount}<br>• Calculated GC Content: <span style="color: #00ff88; font-weight: bold;">${gcPercentage}%</span>`;
-}
+    <!-- 🔒 THE PORTAL ENTRY GATEWAY -->
+    <div id="loginGate" class="gate-card">
+        <h1>FOLIUM MATRIX</h1>
+        <p>SECURE LABORATORY GATEWAY</p>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+            <input type="email" id="gateEmail" placeholder="Access Email Core">
+            <input type="password" id="gatePass" placeholder="Security Token Key">
+        </div>
+        <button class="btn-glow" onclick="checkCredentials()">Initialize Portal Session</button>
+    </div>
 
-// --- TOOL #2 ENGINE ---
-function transcribeSequence() {
-    const input = document.getElementById('dogmaInput').value.trim().toUpperCase().replace(/[^ATCG-]/g, '').replace(/-/g, '');
-    const outBox = document.getElementById('dogmaResultBox');
-    if (!input) { alert("Please provide valid coding DNA template strands (A, T, C, G)."); return; }
-    const mrna = input.replace(/T/g, 'U');
-    const codonWheel = {
-        'AUG':'Methionine (Start)','UUU':'Phenylalanine','UUC':'Phenylalanine','UUA':'Leucine','UUG':'Leucine','UCU':'Serine','UCC':'Serine','UCA':'Serine','UCG':'Serine','UAU':'Tyrosine','UAC':'Tyrosine','UGU':'Cysteine','UGC':'Cysteine','UGG':'Tryptophan','CUU':'Leucine','CUC':'Leucine','CUA':'Leucine','CUG':'Leucine','CCU':'Proline','CCC':'Proline','CCA':'Proline','CCG':'Proline','CAU':'His','CAC':'His','CAA':'Gln','CAG':'Gln','CGU':'Arg','CGC':'Arg','CGA':'Arg','CGG':'Arg','AUU':'Ile','AUC':'Ile','AUA':'Ile','ACU':'Thr','ACC':'Thr','ACA':'Thr','ACG':'Thr','AAU':'Asn','AAC':'Asn','AAA':'Lys','AAG':'Lys','AGU':'Ser','AGC':'Ser','AGA':'Arg','AGG':'Arg','GUU':'Val','GUC':'Val','GUA':'Val','GUG':'Val','GCU':'Ala','GCC':'Ala','GCA':'Ala','GCG':'Ala','GAU':'Asp','GAC':'Asp','GAA':'Glu','GAG':'Glu','GGU':'Gly','GGC':'Glycine','GGA':'Glycine','GGG':'Glycine'
-    };
-    let proteinChain = [];
-    for (let i = 0; i < mrna.length - 2; i += 3) {
-        let codon = mrna.substring(i, i + 3);
-        let aminoAcid = codonWheel[codon] || '[Stop Codon Identified]';
-        proteinChain.push(aminoAcid);
-        if (aminoAcid === '[Stop Codon Identified]') break;
-    }
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">TRANSCRIPTION & TRANSLATION LOGS:</strong><br>-----------------------------------<br>• Synthesized mRNA Strand: <br><span style="color: #06b6d4;">5'- ${mrna} -3'</span><br><br>• Decoded Peptide Chain: <br><span style="color: #00ff88;">${proteinChain.join(' ➔ ')}</span>`;
-}
-
-// --- TOOL #3 ENGINE ---
-const aaDatabase = {
-    'A': { name: "Alanine", mass: "89.10", pI: "6.00", sidechain: "Aliphatic Nonpolar Hydrophobic" },
-    'R': { name: "Arginine", mass: "174.20", pI: "10.76", sidechain: "Positively Charged Basic Hydrophilic" },
-    'C': { name: "Cysteine", mass: "121.16", pI: "5.07", sidechain: "Reactive Structural Sulfhydryl Thiol" },
-    'D': { name: "Aspartic Acid", mass: "133.10", pI: "2.77", sidechain: "Negatively Charged Carboxyl Acidic" },
-    'G': { name: "Glycine", mass: "75.07", pI: "5.97", sidechain: "Minimalist Achiral Conformational Flex" },
-    'H': { name: "Histidine", mass: "155.16", pI: "7.59", sidechain: "Aromatic Imidazole Catalytic Ring" },
-    'K': { name: "Lysine", mass: "146.19", pI: "9.74", sidechain: "Charged Butylammonium Basic Group" },
-    'W': { name: "Tryptophan", mass: "204.23", pI: "5.89", sidechain: "Indole Outer Electronic UV Fluorescent Ring" }
-};
-function runAminoAcidLookup() {
-    const selection = document.getElementById('aaSelect').value;
-    const outBox = document.getElementById('aaResultBox');
-    if (!selection) { outBox.style.display = "none"; return; }
-    const data = aaDatabase[selection];
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">RESIDUE CHEMICAL PROFILE:</strong><br>-----------------------------------<br>• Nomenclature: <span style="color: #06b6d4;">${data.name} (${selection})</span><br>• Sidechain Property: ${data.sidechain}<br>• Monoisotopic Mass: ${data.mass} g/mol<br>• Isoelectric Point (pI): <span style="color: #00ff88; font-weight: bold;">${data.pI}</span>`;
-}
-
-// --- TOOL #4 ENGINE ---
-const elementDatabase = {
-    'C': { mass: "12.011", electro: "2.55", bond: "C-C: 348 kJ/mol", note: "Backbone structural infrastructure scaffolding node." },
-    'H': { mass: "1.008", electro: "2.20", bond: "H-H: 436 kJ/mol", note: "Solvation matrix proton gradient active element." },
-    'N': { mass: "14.007", electro: "3.04", bond: "C-N: 305 kJ/mol", note: "Amide resonance structural planar link generator." },
-    'O': { mass: "15.999", electro: "3.44", bond: "C=O: 743 kJ/mol", note: "High coordinating dipoles hydrogen bonding acceptor." },
-    'P': { mass: "30.974", electro: "2.19", bond: "P-O: 335 kJ/mol", note: "High-energy phosphoanhydride kinetic structural bridge." }
-};
-function runElementLookup() {
-    const selection = document.getElementById('elementSelect').value;
-    const outBox = document.getElementById('elementResultBox');
-    if (!selection) { outBox.style.display = "none"; return; }
-    const data = elementDatabase[selection];
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">ATOMIC PROFILE MATRIX:</strong><br>-----------------------------------<br>• Element Block: <span style="color: #06b6d4;">${selection}</span><br>• Atomic Mass weight: ${data.mass} g/mol<br>• Electronegativity Scale: ${data.electro}<br>• Base Bonding Enthalpy: ${data.bond}<br>• <small style="color: #94a3b8;">Biological Role: ${data.note}</small>`;
-}
-
-// --- TOOL #5 ENGINE ---
-function runStatisticalOutlierEngine() {
-    const rawData = document.getElementById('dataInput').value;
-    const outBox = document.getElementById('dataResultBox');
-    const dataArr = rawData.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
-    if (dataArr.length < 3) { alert("Sample size insufficient. Please enter at least 3 numeric values."); return; }
-    const mean = dataArr.reduce((a, b) => a + b, 0) / dataArr.length;
-    const variance = dataArr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (dataArr.length - 1);
-    const stdev = Math.sqrt(variance);
-    const upperLimit = mean + (3 * stdev);
-    const lowerLimit = mean - (3 * stdev);
-    const outliers = dataArr.filter(x => x > upperLimit || x < lowerLimit);
-    outBox.style.display = "block";
-    let outlierReport = outliers.length > 0 ? `<span style="color: #ef4444; font-weight: bold;">⚠️ Outliers Flagged Beyond 3-Sigma Limits: [ ${outliers.join(', ')} ]</span>` : `<span style="color: #00ff88; font-weight: bold;">✅ Dataset Stable: Zero experimental outliers caught.</span>`;
-    outBox.innerHTML = `<strong style="color: #00ff88;">STATISTICAL VARIANCE REPORT:</strong><br>-----------------------------------<br>• Population Count (N): ${dataArr.length} samples<br>• Mean Group Average (μ): ${mean.toFixed(4)}<br>• Standard Deviation (σ): ${stdev.toFixed(4)}<br><br>• Diagnostics Metric: ${outlierReport}`;
-}
-
-// --- TOOL #6 ENGINE ---
-function runAIPredictorEngine() {
-    const input = document.getElementById('aiPeptideInput').value.toUpperCase().trim().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g, '');
-    const outBox = document.getElementById('aiResultBox');
-    if (!input) { alert("Please paste amino acid single-letter residues first."); return; }
-    const hydroCount = (input.match(/[IVLFMACYW]/g) || []).length;
-    const percentage = ((hydroCount / input.length) * 100).toFixed(1);
-    const solubility = percentage > 45 ? "Low Fluidity Layer (Organic Co-Solvent Carriers Required)" : "High Fluidity Layer (Aqueous Solution Stable)";
-    const routing = percentage > 45 ? "Reverse-Phase Lipophilic Matrix (C18 HPLC Parsing Lines)" : "Ion-Exchange Chromatography (IEX Gradient Lines)";
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">🧠 HEURISTIC AI FORECAST RADAR:</strong><br>-----------------------------------<br>• Target Sequence: <span style="color: #06b6d4; font-family: monospace;">${input}</span><br>• Hydrophobic Bulk Density: ${percentage}%<br><br>• Predicted Physical Profile: <br><span style="color: #e2e8f0;">${solubility}</span><br><br>• Recommended Purification Route: <br><span style="color: #00ff88; font-weight: bold;">${routing}</span>`;
-}
-
-// --- TOOL #7 ENGINE ---
-function runMolarityCalculator() {
-    const mw = parseFloat(document.getElementById('molInputMW').value);
-    const molarity = parseFloat(document.getElementById('molInputMolarity').value);
-    const volume = parseFloat(document.getElementById('molInputVolume').value);
-    const outBox = document.getElementById('molarityResultBox');
-    if (isNaN(mw) || isNaN(molarity) || isNaN(volume) || mw <= 0 || molarity <= 0 || volume <= 0) { alert("Please provide accurate, positive numbers for all solution metrics."); return; }
-    const targetMass = molarity * (volume / 1000) * mw;
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">MASS CALCULATION METRICS:</strong><br>-----------------------------------<br>• Target Parameters: <span style="color: #06b6d4;">${molarity} M</span> in <span style="color: #06b6d4;">${volume} mL</span><br>• Solid Formula Weight: ${mw} g/mol<br><br>• Required Measure Target: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">${targetMass.toFixed(4)} grams</span> of dry reagent powder.`;
-}
-
-// --- TOOL #8 ENGINE ---
-function runBeerLambertCalculator() {
-    const absorbance = parseFloat(document.getElementById('beerAbsorbance').value);
-    const extinction = parseFloat(document.getElementById('beerExtinction').value);
-    const pathLength = parseFloat(document.getElementById('beerPathLength').value);
-    const outBox = document.getElementById('beerResultBox');
-    if (isNaN(absorbance) || isNaN(extinction) || isNaN(pathLength) || absorbance <= 0 || extinction <= 0 || pathLength <= 0) { alert("Please enter valid positive numbers across all spectrophotometer scales."); return; }
-    const molarConcentration = absorbance / (extinction * pathLength);
-    const microMolar = molarConcentration * 1000000;
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">SPECTROSCOPY SCAN SPECTRUM LOGS:</strong><br>-----------------------------------<br>• Total Absorbed Light (A): ${absorbance}<br>• Extinction Coeff (ε): ${extinction} M⁻¹cm⁻¹<br><br>• Calculated Concentration Result: <br><span style="color: #00ff88; font-weight: bold; font-size: 16px;">${microMolar.toFixed(3)} μM</span> (Micromolar concentration)`;
-}
-
-// --- TOOL #9 ENGINE ---
-function runPurityRatioInspector() {
-    const a260 = parseFloat(document.getElementById('purityA260').value);
-    const a280 = parseFloat(document.getElementById('purityA280').value);
-    const outBox = document.getElementById('purityResultBox');
-    if (isNaN(a260) || isNaN(a280) || a260 <= 0 || a280 <= 0) { alert("Please input accurate, positive optical density readings."); return; }
-    const ratio = a260 / a280;
-    let qualityDiagnostic = "";
-    if (ratio >= 1.75 && ratio <= 1.85) { qualityDiagnostic = `<span style="color: #00ff88; font-weight: bold;">Pure DNA Extract Cleared.</span>`; } 
-    else if (ratio >= 1.95 && ratio <= 2.05) { qualityDiagnostic = `<span style="color: #00ff88; font-weight: bold;">Pure RNA Extract Cleared.</span>`; } 
-    else if (ratio > 1.85 && ratio < 1.95) { qualityDiagnostic = `<span style="color: #06b6d4; font-weight: bold;">Mixed Nucleic Extraction (DNA/RNA Equilibrium)</span>`; } 
-    else { qualityDiagnostic = `<span style="color: #ef4444; font-weight: bold;">⚠️ Contamination Detected: Impure sample matrix. Protein or organic residue detected.</span>`; }
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">SPECTRAL PURITY ANALYSIS REPORT:</strong><br>-----------------------------------<br>• Absorbance Ratio Metrics (A₂₆₀ / A₂₈₀): <span style="color: #06b6d4; font-weight: bold;">${ratio.toFixed(3)}</span><br><br>• Quality Assurance Diagnostics:<br>${qualityDiagnostic}`;
-}
-
-// --- TOOL #10 ENGINE ---
-function runDilutionEquation() {
-    const c1 = parseFloat(document.getElementById('dilutionC1').value);
-    const c2 = parseFloat(document.getElementById('dilutionC2').value);
-    const v2 = parseFloat(document.getElementById('dilutionV2').value);
-    const outBox = document.getElementById('dilutionResultBox');
-    if (isNaN(c1) || isNaN(c2) || isNaN(v2) || c1 <= 0 || c2 <= 0 || v2 <= 0) { alert("Please enter positive, non-zero values for all dilution blocks."); return; }
-    if (c2 > c1) { alert("Target working concentration (C2) cannot exceed initial stock strength (C1)."); return; }
-    const v1 = (c2 * v2) / c1;
-    const solventNeeded = v2 - v1;
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">VOLUMETRIC DILUTION MIX RECIPE:</strong><br>-----------------------------------<br>• Target: Make <span style="color: #06b6d4;">${v2} mL</span> of <span style="color: #06b6d4;">${c2}X strength solution</span><br>• From a concentrated stock strength of: ${c1}X<br>-----------<br>• Concentrated Stock Aliquot to pipe ($V_1$): <span style="color: #00ff88; font-weight: bold;">${v1.toFixed(2)} mL</span><br>• Water / Buffer Solvent to add: <span style="color: #06b6d4; font-weight: bold;">${solventNeeded.toFixed(2)} mL</span>`;
-}
-
-// --- TOOL #11 ENGINE ---
-function runPCRMasterMixFormulator() {
-    const tubes = parseInt(document.getElementById('pcrTubesCount').value);
-    const outBox = document.getElementById('pcrMixResultBox');
-    if (isNaN(tubes) || tubes <= 0) { alert("Please provide a valid number of reaction tubes."); return; }
-    const baselineReagents = [
-        { name: "Molecular Grade H₂O", unitVol: 12.5 }, { name: "10X Taq Buffer Matrix", unitVol: 2.5 },
-        { name: "Forward Primer (10 μM)", unitVol: 1.0 }, { name: "Reverse Primer (10 μM)", unitVol: 1.0 },
-        { name: "dNTPs Mix Core (10 mM)", unitVol: 0.5 }, { name: "Active Taq DNA Polymerase", unitVol: 0.25 },
-        { name: "Template Extraction DNA", unitVol: 7.25 }
-    ];
-    const scaleMultiplier = tubes * 1.1; let listRows = "";
-    baselineReagents.forEach(r => { const totalVol = r.unitVol * scaleMultiplier; listRows += `• ${r.name}: <span style="color: #06b6d4;">${r.unitVol} μL</span> ➔ <span style="color: #00ff88; font-weight: bold;">${totalVol.toFixed(2)} μL</span> bulk<br>`; });
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">PCR BULK RECIPE FORMULATION:</strong><br>• Reaction Count: ${tubes} tubes (+10% wall-loss safety padding applied)<br>-----------------------------------<br>${listRows}`;
-}
-
-// --- TOOL #12 ENGINE ---
-function runEnzymeKineticsEngine() {
-    const vmax = parseFloat(document.getElementById('enzymeVmax').value);
-    const km = parseFloat(document.getElementById('enzymeKm').value);
-    const substrate = parseFloat(document.getElementById('enzymeSubstrate').value);
-    const outBox = document.getElementById('enzymeResultBox');
-    if (isNaN(vmax) || isNaN(km) || isNaN(substrate) || vmax <= 0 || km <= 0 || substrate <= 0) { alert("Please provide positive numerical dimensions for all velocity indexes."); return; }
-    const initialVelocity = (vmax * substrate) / (km + substrate);
-    const canvas = document.getElementById('kineticsCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const leftMargin = 25, bottomMargin = 135, graphWidth = 260, graphHeight = 115;
-    ctx.beginPath(); ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.moveTo(leftMargin, 10); ctx.lineTo(leftMargin, bottomMargin); ctx.lineTo(leftMargin + graphWidth, bottomMargin); ctx.stroke();
-    const maxScanSubstrateRange = Math.max(substrate * 2, km * 4, 10);
-    ctx.beginPath(); ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2;
-    for (let x = leftMargin; x <= leftMargin + graphWidth; x++) {
-        let currentScanS = ((x - leftMargin) / graphWidth) * maxScanSubstrateRange;
-        let calculatedV = (vmax * currentScanS) / (km + currentScanS);
-        let y = bottomMargin - (calculatedV / vmax) * graphHeight;
-        if (x === leftMargin) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    const dotX = leftMargin + (substrate / maxScanSubstrateRange) * graphWidth; const dotY = bottomMargin - (initialVelocity / vmax) * graphHeight;
-    if (dotX <= leftMargin + graphWidth && dotY >= 10) { ctx.beginPath(); ctx.fillStyle = '#06b6d4'; ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI); ctx.fill(); }
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">SATURATION VELOCITY METRICS:</strong><br>-----------------------------------<br>• Constant Load Substrate [S]: ${substrate} mM<br>• Yield Initial Velocity ($v_0$): <span style="color: #00ff88; font-weight: bold; font-size: 16px;">${initialVelocity.toFixed(4)} μmol/min</span><br><br>• <small style="color: #94a3b8;">Saturation Scale: ${((initialVelocity / vmax) * 100).toFixed(1)}% of Vmax potential reached.</small>`;
-}
-
-// --- TOOL #13 ENGINE ---
-function runBufferTitrationEngine() {
-    const pKa = parseFloat(document.getElementById('titrationBuffer').value);
-    const baseEquiv = parseFloat(document.getElementById('titrationBase').value);
-    const outBox = document.getElementById('titrationResultBox');
-    if (isNaN(baseEquiv) || baseEquiv <= 0 || baseEquiv >= 1) { alert("Please enter a base equivalent value strictly between 0.01 and 0.99."); return; }
-    const pH = pKa + Math.log10(baseEquiv / (1 - baseEquiv));
-    const canvas = document.getElementById('titrationCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const leftMargin = 25, bottomMargin = 135, graphWidth = 260, graphHeight = 115;
-    ctx.beginPath(); ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.moveTo(leftMargin, 10); ctx.lineTo(leftMargin, bottomMargin); ctx.lineTo(leftMargin + graphWidth, bottomMargin); ctx.stroke();
-    ctx.beginPath(); ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2;
-    for (let x = leftMargin; x <= leftMargin + graphWidth; x++) {
-        let pct = (x - leftMargin) / graphWidth; if (pct < 0.01) pct = 0.01; if (pct > 0.99) pct = 0.99;
-        let currentPH = pKa + Math.log10(pct / (1 - pct)); let y = bottomMargin - (currentPH / 14) * graphHeight;
-        if (x === leftMargin) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    const dotX = leftMargin + baseEquiv * graphWidth; const dotY = bottomMargin - (pH / 14) * graphHeight;
-    ctx.beginPath(); ctx.fillStyle = '#06b6d4'; ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI); ctx.fill();
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">EQUILIBRIUM TITRATION MATRIX REPORT:</strong><br>-----------------------------------<br>• System settings: pKa reference value = ${pKa}<br>• Base Load ratio: ${baseEquiv} equivalents added<br><br>• Calculated Solution State: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">pH = ${pH.toFixed(2)}</span>`;
-}
-
-// --- TOOL #14 ENGINE ---
-function runRestrictionMapperEngine() {
-    const motif = document.getElementById('enzymeRestrictionSelect').value;
-    const rawDna = document.getElementById('restrictionDnaInput').value.toUpperCase().trim().replace(/[^ATCG]/g, '');
-    const outBox = document.getElementById('restrictionResultBox');
-    if (!rawDna) { alert("Please paste a valid sequence of A, T, C, G DNA bases first."); return; }
-    let cutIndices = []; let searchIndex = 0;
-    while ((searchIndex = rawDna.indexOf(motif, searchIndex)) !== -1) { cutIndices.push(searchIndex + 1); searchIndex += 1; }
-    let fragments = []; let lastCut = 0;
-    cutIndices.forEach(cut => { fragments.push(rawDna.substring(lastCut, cut)); lastCut = cut; }); fragments.push(rawDna.substring(lastCut));
-    const fragmentLengths = fragments.map(f => f.length);
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">RESTRICTION MAPPING REPORT:</strong><br>-----------------------------------<br>• Active Target Motif: <span style="color: #06b6d4; font-family: monospace;">${motif}</span><br>• Total Cleavage Sites Found: ${cutIndices.length}<br>• Cleavage Slice Coordinates: [ ${cutIndices.length ? cutIndices.join(', ') : 'None'} ]<br><br>• Generated Fragment Count: <span style="color: #00ff88; font-weight: bold;">${fragments.length}</span><br>• Sliced Fragment Base Lengths: <span style="color: #06b6d4; font-family: monospace;">${fragmentLengths.join(' bp, ')} bp</span>`;
-}
-
-// --- TOOL #15 ENGINE ---
-function runTrypsinDigestEngine() {
-    const rawProtein = document.getElementById('trypsinProteinInput').value.toUpperCase().trim().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g, '');
-    const outBox = document.getElementById('trypsinResultBox');
-    if (!rawProtein) { alert("Please paste an amino acid protein sequence string first."); return; }
-    const residueMasses = { 'A':71.08, 'R':156.19, 'N':114.10, 'D':115.09, 'C':103.14, 'Q':128.13, 'E':129.12, 'G':57.05, 'H':137.14, 'I':113.16, 'L':113.16, 'K':128.17, 'M':131.20, 'F':147.18, 'P':97.12, 'S':87.08, 'T':101.11, 'W':186.21, 'Y':163.18, 'V':99.13 };
-    let fragments = []; let currentFragment = "";
-    for (let i = 0; i < rawProtein.length; i++) { const residue = rawProtein[i]; currentFragment += residue; if (residue === 'K' || residue === 'R') { fragments.push(currentFragment); currentFragment = ""; } }
-    if (currentFragment) fragments.push(currentFragment);
-    let reportRows = "";
-    fragments.forEach((frag, idx) => { let massAccumulator = 18.02; for (let char of frag) { massAccumulator += (residueMasses[char] || 0); } reportRows += `• Frag #${idx + 1} [${frag}]: <span style="color: #00ff88; font-weight: bold;">${massAccumulator.toFixed(2)} u</span><br>`; });
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">TRYPSIN PROTEOLYTIC DIGEST REPORT:</strong><br>-----------------------------------<br>• Total Cleaved Peptides: ${fragments.length} pieces<br><br><strong>PEPTIDE MASS FINGERPRINT:</strong><br>${reportRows}`;
-}
-
-// --- TOOL #16 ENGINE ---
-function calculatePeptideNetCharge(sequence, pH) {
-    const pKaValues = { 'R':12.48, 'K':10.53, 'H':6.00, 'D':3.86, 'E':4.25, 'C':8.33, 'Y':10.07 }; let charge = 0;
-    charge += 1 / (1 + Math.pow(10, pH - 9.6)); charge -= 1 / (1 + Math.pow(10, 2.34 - pH));
-    for (let residue of sequence) { if (['R', 'K', 'H'].includes(residue)) { charge += 1 / (1 + Math.pow(10, pH - pKaValues[residue])); } else if (['D', 'E', 'C', 'Y'].includes(residue)) { charge -= 1 / (1 + Math.pow(10, pKaValues[residue] - pH)); } }
-    return charge;
-}
-function runChargePlotterEngine() {
-    const rawPeptide = document.getElementById('chargePeptideInput').value.toUpperCase().trim().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g, '');
-    const outBox = document.getElementById('chargeResultBox');
-    if (!rawPeptide) { alert("Please map a valid single-letter sequence matrix first."); return; }
-    let isoelectricPoint = 7.0; for (let i = 0; i < 14; i += 0.005) { if (Math.abs(calculatePeptideNetCharge(rawPeptide, i)) < Math.abs(calculatePeptideNetCharge(rawPeptide, isoelectricPoint))) { isoelectricPoint = i; } }
-    const canvas = document.getElementById('chargeCanvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const leftMargin = 25, bottomMargin = 75, graphWidth = 260, graphHeight = 65;
-    ctx.beginPath(); ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.moveTo(leftMargin, bottomMargin); ctx.lineTo(leftMargin + graphWidth, bottomMargin); ctx.stroke();
-    ctx.beginPath(); ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2;
-    for (let x = leftMargin; x <= leftMargin + graphWidth; x++) { let currentPH = ((x - leftMargin) / graphWidth) * 14; let calculatedNetCharge = calculatePeptideNetCharge(rawPeptide, currentPH); let y = bottomMargin - (calculatedNetCharge / 5) * graphHeight; if (x === leftMargin) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
-    ctx.stroke();
-    const dotX = leftMargin + (isoelectricPoint / 14) * graphWidth; ctx.beginPath(); ctx.fillStyle = '#06b6d4'; ctx.arc(dotX, bottomMargin, 4, 0, 2 * Math.PI); ctx.fill();
-    outBox.style.display = "block";
-    outBox.innerHTML = `<strong style="color: #00ff88;">BIOPHYSICAL CHARGE DYNAMICS REPORT:</strong><br>-----------------------------------<br>• Net Charge at Neutrality State (pH 7.00): ${calculatePeptideNetCharge(rawPeptide, 7.0).toFixed(2)} e<br><br>• Calculated Isoelectric Point: <span style="color: #00ff88; font-weight: bold; font-size: 16px;">pI = ${isoelectricPoint.toFixed(2)}</span><br><br><small style="color: #94a3b8;">(The solution state where overall electrical balance reads exactly 0.00)</small>`;
-}
-
-// --- TOOL #17 ENGINE (NEW) ---
-function runPlasmidDrawerEngine() {
-    const sizeBp = parseInt(document.getElementById('plasmidSize').value) || 4361;
-    const canvas = document.getElementById('plasmidCanvas');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const centerX = 150, centerY = 150, radius = 90;
-
-    // Draw Master Vector Base Ring Backbone Line
-    ctx.beginPath();
-    ctx.strokeStyle = '#1e293b';
-    ctx.lineWidth = 8;
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    // Map Feature Arcs (e.g., Promoter at 10-20%, Target Gene at 35-65%, AmpR at 75-90%)
-    const features = [
-        { name: "Core Promoter", startPct: 0.10, endPct: 0.22, color: "#00ff88" },
-        { name: "Target Gene Insert", startPct: 0.35, endPct: 0.68, color: "#06b6d4" },
-        { name: "AmpR Marker", startPct: 0.75, endPct: 0.92, color: "#a855f7" }
-    ];
-
-    features.forEach(f => {
-        ctx.beginPath();
-        ctx.strokeStyle = f.color;
-        ctx.lineWidth = 8;
-        ctx.arc(centerX, centerY, radius, f.startPct * 2 * Math.PI - Math.PI/2, f.endPct * 2 * Math.PI - Math.PI/2);
-        ctx.stroke();
+    <!-- 🧬 MASTER WORKSPACE MAINFRAME -->
+    <div id="workspaceWrapper" class="workspace-wrapper" style="display: none; flex-direction: column; gap: 40px; width: 100%; max-width: 600px; padding: 40px 0;">
         
-        // Add minimal structural text label keys
-        let midAngle = ((f.startPct + f.endPct) / 2) * 2 * Math.PI - Math.PI/2;
-        let labelX = centerX + (radius + 24) * Math.cos(midAngle);
-        let labelY = centerY + (radius + 24) * Math.sin(midAngle);
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = 'bold 9px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(f.name, labelX, labelY);
-    });
+        <!-- SECTION 1: GENOMICS & VECTOR ENGINEERING -->
+        <div class="section-block">
+            <div class="section-header">📁 SECTION 1: GENOMICS & VECTOR ENGINEERING</div>
+            
+            <div class="tool-card">
+                <h1>🧬 Macromolecular Sequence Analyzer</h1>
+                <p>Tool #1: Computes single-letter residue lengths and exact GC Content percentages from raw biological sequences.</p>
+                <textarea id="sequenceInput" placeholder="Paste your raw DNA/RNA nucleotides here (e.g., ATGCGATCG)..." oninput="logTelemetryBytes(this)"></textarea>
+                <button class="btn-glow" onclick="analyzeSequence(); trackClick('Tool 1')">Analyze Sequence</button>
+                <div id="resultBox" class="result-box"></div>
+            </div>
 
-    // Center Display Marker Tag
-    ctx.fillStyle = '#white';
-    ctx.font = 'bold 13px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(`Vector: ${sizeBp} bp`, centerX, centerY);
-}
+            <div class="tool-card">
+                <h1>🧪 The Central Dogma Transcriptor</h1>
+                <p>Tool #2: Processes coding DNA templates, synthesizes messenger RNA loops, and decodes the functional peptide proteins.</p>
+                <textarea id="dogmaInput" placeholder="Enter coding DNA triplets separated by hyphens (e.g., ATG-GCA-GTC)..." oninput="logTelemetryBytes(this)"></textarea>
+                <button class="btn-glow" onclick="transcribeSequence(); trackClick('Tool 2')">Transcribe & Translate</button>
+                <div id="dogmaResultBox" class="result-box"></div>
+            </div>
 
-// --- TOOL #18 ENGINE (NEW) ---
-function runPairwiseAlignmentEngine() {
-    const seqA = document.getElementById('alignSeqA').value.toUpperCase().trim();
-    const seqB = document.getElementById('alignSeqB').value.toUpperCase().trim();
-    const outBox = document.getElementById('alignmentResultBox');
+            <div class="tool-card">
+                <h1>✂️ Palindromic Restriction Enzyme Mapper</h1>
+                <p>Tool #14: Simulates restriction digestion fragmentation pipelines against standard biochemical enzyme motifs.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <select id="enzymeRestrictionSelect">
+                        <option value="GAATTC">EcoRI (Motif: G^AATTC)</option>
+                        <option value="AAGCTT">HindIII (Motif: A^AGCTT)</option>
+                        <option value="GGATCC">BamHI (Motif: G^GATCC)</option>
+                    </select>
+                    <textarea id="restrictionDnaInput" placeholder="Paste raw DNA characters here..." oninput="logTelemetryBytes(this)"></textarea>
+                </div>
+                <button class="btn-glow" onclick="runRestrictionMapperEngine(); trackClick('Tool 14')">Run Restriction Mapping Digest</button>
+                <div id="restrictionResultBox" class="result-box"></div>
+            </div>
 
-    if (!seqA || !seqB) { alert("Please provide both target sequences to compute."); return; }
+            <div class="tool-card">
+                <h1>⭕ Circular Plasmid Vector Map Canvas Drawer</h1>
+                <p>Tool #17: Uses trigonometric vector paths to render interactive cloning plasmid feature rings dynamically.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <input type="number" id="plasmidSize" value="4361" placeholder="Plasmid Base Pair Length (bp)">
+                </div>
+                <button class="btn-glow" onclick="runPlasmidDrawerEngine(); trackClick('Tool 17')" style="margin-bottom: 15px;">Map Plasmid Vector Ring</button>
+                <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
+                    <canvas id="plasmidCanvas" width="300" height="300" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+                </div>
+            </div>
 
-    let lineA = "", lineMatch = "", lineB = "";
-    let matchCount = 0;
-    const loopLen = Math.max(seqA.length, seqB.length);
+            <div class="tool-card">
+                <h1>🗺️ Local Pairwise Sequence Alignment Mismatch Viewer</h1>
+                <p>Tool #18: Compares mutation alignments between a wild-type sequence and a target variant clone.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="alignSeqA" placeholder="Wild-Type Reference String..." style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none; font-family: monospace;">
+                    <input type="text" id="alignSeqB" placeholder="Variant Sample Target String..." style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none; font-family: monospace;">
+                </div>
+                <button class="btn-glow" onclick="runPairwiseAlignmentEngine(); trackClick('Tool 18')">Execute Pairwise Sync</button>
+                <div id="alignmentResultBox" class="result-box"></div>
+            </div>
+        </div>
 
-    for (let i = 0; i < loopLen; i++) {
-        let charA = seqA[i] || "-";
-        let charB = seqB[i] || "-";
-        lineA += charA;
-        lineB += charB;
+        <!-- SECTION 2: PROTEOMICS & BIOPHYSICS -->
+        <div class="section-block">
+            <div class="section-header">📁 SECTION 2: PROTEOMICS & BIOPHYSICS</div>
+            
+            <div class="tool-card">
+                <h1>🔬 Amino Acid Structural Profile Finder</h1>
+                <p>Tool #3: Pulls sidechain classifications, accurate isotopic masses, and specific Isoelectric Point parameters.</p>
+                <select id="aaSelect" onchange="runAminoAcidLookup(); trackClick('Tool 3')">
+                    <option value="">-- Choose Target Residue --</option>
+                    <option value="A">Alanine (Ala / A) - Aliphatic Nonpolar</option>
+                    <option value="R">Arginine (Arg / R) - Positively Charged Basic</option>
+                    <option value="C">Cysteine (Cys / C) - Reactive Thiol Hydrophilic</option>
+                    <option value="D">Aspartic Acid (Asp / D) - Negatively Charged Acidic</option>
+                    <option value="G">Glycine (Gly / G) - Flexible Achiral Structure</option>
+                    <option value="H">Histidine (His / H) - Aromatic Imidazole Ring</option>
+                    <option value="K">Lysine (Lys / K) - Basic Amino Sidechain</option>
+                    <option value="W">Tryptophan (Trp / W) - Indole Fluorescent Aromatic</option>
+                </select>
+                <div id="aaResultBox" class="result-box"></div>
+            </div>
 
-        if (charA === charB && charA !== "-") {
-            lineMatch += "|";
-            matchCount++;
-        } else {
-            lineMatch += "X";
-        }
-    }
+            <div class="tool-card">
+                <h1>🤖 Heuristic AI Peptide Property Predictor</h1>
+                <p>Tool #6: Deploys local metrics to forecast sequence solubility fluidity patterns and recommend optimal purification routing lines.</p>
+                <textarea id="aiPeptideInput" placeholder="Enter single-letter amino acid sequence tags (e.g., RGDWFLM)..." oninput="logTelemetryBytes(this)"></textarea>
+                <button class="btn-glow" onclick="runAIPredictorEngine(); trackClick('Tool 6')">Run AI Property Forecast</button>
+                <div id="aiResultBox" class="result-box"></div>
+            </div>
 
-    const similarity = ((matchCount / loopLen) * 100).toFixed(1);
-    outBox.style.display = "block";
-    outBox.innerHTML = `
-        <strong style="color: #00ff88;">SEQUENCE ALIGNMENT SIMULATION:</strong><br>
-        -----------------------------------<br>
-        • Identity Sequence Matches: ${matchCount} / ${loopLen} residues<br>
-        • Alignment Matrix Match: <span style="color: #00ff88; font-weight: bold;">${similarity}% Identity</span><br><br>
-        <span style="font-family: monospace; white-space: pre; display: block; background: #020617; padding: 10px; border-radius: 4px; line-height:1.2;">Ref:   ${lineA}<br>Match: <span style="color:#06b6d4;">${lineMatch}</span><br>Clone: ${lineB}</span>
-    `;
-}
+            <div class="tool-card">
+                <h1>✂️ Trypsin Digestion & Mass Spectrometry Simulator</h1>
+                <p>Tool #15: Simulates proteolytic peptide cleavage maps across Lysine (K) and Arginine (R) junctions.</p>
+                <textarea id="trypsinProteinInput" placeholder="Paste single-letter protein FASTA sequence here..." oninput="logTelemetryBytes(this)"></textarea>
+                <button class="btn-glow" onclick="runTrypsinDigestEngine(); trackClick('Tool 15')">Execute Proteolytic Digestion</button>
+                <div id="trypsinResultBox" class="result-box"></div>
+            </div>
 
-// --- TOOL #19 ENGINE (NEW) ---
-function runBufferOptimizerEngine() {
-    const config = document.getElementById('optimizeBufferType').value.split(',');
-    const pKa = parseFloat(config[0]);
-    const mwAcid = parseFloat(config[1]);
-    const mwBase = parseFloat(config[2]);
+            <div class="tool-card">
+                <h1>⚡ Peptide Charge Gradient Curve Plotter</h1>
+                <p>Tool #16: Tracks net molecular electrical charge variations across environmental pH spectra.</p>
+                <textarea id="chargePeptideInput" placeholder="Enter single-letter protein sequence (e.g., KKHEDRCE)..." oninput="logTelemetryBytes(this)"></textarea>
+                <button class="btn-glow" onclick="runChargePlotterEngine(); trackClick('Tool 16')" style="margin-bottom: 15px;">Map Charge Gradient Graph</button>
+                <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
+                    <canvas id="chargeCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+                </div>
+                <div id="chargeResultBox" class="result-box"></div>
+            </div>
+        </div>
 
-    const targetPH = parseFloat(document.getElementById('optimizeTargetPH').value);
-    const molarity = parseFloat(document.getElementById('optimizeMolarity').value);
-    const volumeMl = parseFloat(document.getElementById('optimizeVolume').value);
-    const outBox = document.getElementById('optimizerResultBox');
+        <!-- SECTION 3: WET LAB ANALYTICAL CHEMISTRY -->
+        <div class="section-block">
+            <div class="section-header">📁 SECTION 3: WET LAB ANALYTICAL CHEMISTRY</div>
+            
+            <div class="tool-card">
+                <h1>⚛️ Bio-Element Organic Reference Matrix</h1>
+                <p>Tool #4: Loads standard covalent bonding enthalpies, valence clouds, and atomic properties.</p>
+                <select id="elementSelect" onchange="runElementLookup(); trackClick('Tool 4')">
+                    <option value="">-- Choose Target Core Atom --</option>
+                    <option value="C">Carbon (C) - Organic Infrastructure Node</option>
+                    <option value="H">Hydrogen (H) - Solution Matrix Proton</option>
+                    <option value="N">Nitrogen (N) - Peptidyl Planar Amide Link</option>
+                    <option value="O">Oxygen (O) - Hydrogen Bond Dipole Acceptor</option>
+                    <option value="P">Phosphorus (P) - Phosphoanhydride Bridge</option>
+                </select>
+                <div id="elementResultBox" class="result-box"></div>
+            </div>
 
-    if (isNaN(targetPH) || isNaN(molarity) || isNaN(volumeMl) || targetPH <= 0 || molarity <= 0 || volumeMl <= 0) {
-        alert("Please enter exact positive values for all target specifications.");
-        return;
-    }
+            <div class="tool-card">
+                <h1>🧪 Solid Solution Molarity Calculator</h1>
+                <p>Tool #7: Computes the precise weight mass in grams required to synthesize dry reagents into liquid target concentrations.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <input type="number" id="molInputMW" placeholder="Formula / Molecular Weight (g/mol)">
+                    <input type="number" id="molInputMolarity" placeholder="Target Molarity (M)">
+                    <input type="number" id="molInputVolume" placeholder="Target Volume (mL)">
+                </div>
+                <button class="btn-glow" onclick="runMolarityCalculator(); trackClick('Tool 7')">Compute Target Mass</button>
+                <div id="molarityResultBox" class="result-box"></div>
+            </div>
 
-    // Solve ratio using Henderson-Hasselbalch equations: pH = pKa + log([Base]/[Acid])
-    const baseToAcidRatio = Math.pow(10, targetPH - pKa);
-    const acidMolarity = molarity / (1 + baseToAcidRatio);
-    const baseMolarity = molarity - acidMolarity;
+            <div class="tool-card">
+                <h1>📉 Beer-Lambert Concentration Finder</h1>
+                <p>Tool #8: Traces overall chemical molar concentrations by resolving total optical absorbance profiles.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <input type="number" id="beerAbsorbance" placeholder="Absorbance Scale Value (A)" step="any">
+                    <input type="number" id="beerExtinction" placeholder="Extinction Coefficient (M⁻¹cm⁻¹)">
+                    <input type="number" id="beerPathLength" value="1">
+                </div>
+                <button class="btn-glow" onclick="runBeerLambertCalculator(); trackClick('Tool 8')">Compute Concentration</button>
+                <div id="beerResultBox" class="result-box"></div>
+            </div>
 
-    const litToVol = volumeMl / 1000;
-    const targetMassAcid = acidMolarity * litToVol * mwAcid;
-    const targetMassBase = baseMolarity * litToVol * mwBase;
+            <div class="tool-card">
+                <h1>🔬 Nucleic Acid Purity Inspector (A₂₆₀/A₂₈₀)</h1>
+                <p>Tool #9: Evaluates sample isolation quality controls via optical quotient thresholds.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <input type="number" id="purityA260" placeholder="Absorbance value at 260 nm (A₂₆₀)" step="any">
+                    <input type="number" id="purityA280" placeholder="Absorbance value at 280 nm (A₂₈₀)" step="any">
+                </div>
+                <button class="btn-glow" onclick="runPurityRatioInspector(); trackClick('Tool 9')">Inspect Sample Extract</button>
+                <div id="purityResultBox" class="result-box"></div>
+            </div>
 
-    outBox.style.display = "block";
-    outBox.innerHTML = `
-        <strong style="color: #00ff88;">AUTOMATED FORMULATION OPTIMIZER RECIPE:</strong><br>
-        -----------------------------------<br>
-        • Action: Targets <span style="color: #06b6d4;">${volumeMl} mL</span> at concentration <span style="color: #06b6d4;">${molarity} M</span> and <span style="color: #00ff88;">pH ${targetPH}</span><br>-----------<br>
-        • Measure Weak Acid Component: <span style="color: #00ff88; font-weight: bold;">${targetMassAcid.toFixed(4)} grams</span><br>
-        • Measure Conjugate Base Component: <span style="color: #06b6d4; font-weight: bold;">${targetMassBase.toFixed(4)} grams</span><br><br>
-        <small style="color: #94a3b8;">Mix dry components together, dissolve in ~80% target volume water, confirm stability, and top up to exactly ${volumeMl} mL.</small>
-    `;
-}
+            <div class="tool-card">
+                <h1>💦 Stock Concentrate Serial Dilution Engine</h1>
+                <p>Tool #10: Computes stock solute allocations and required solvent diluent mixing ratios using C₁V₁ = C₂V₂ parameters.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <input type="number" id="dilutionC1" placeholder="Concentration of Initial Stock (C1)">
+                    <input type="number" id="dilutionC2" placeholder="Target Working Concentration (C2)">
+                    <input type="number" id="dilutionV2" placeholder="Target Working Final Volume (V2) (mL)">
+                </div>
+                <button class="btn-glow" onclick="runDilutionEquation(); trackClick('Tool 10')">Compute Volumetric Mix</button>
+                <div id="dilutionResultBox" class="result-box"></div>
+            </div>
+
+            <div class="tool-card">
+                <h1>🧪 Buffer Titration Curve Simulator</h1>
+                <p>Tool #13: Simulates pH shifting dynamics during titration profiles and renders weak acid equilibrium lines.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <select id="titrationBuffer">
+                        <option value="4.76">Acetate Buffer System (pKa = 4.76)</option>
+                        <option value="7.20">Phosphate Buffer System (pKa = 7.20)</option>
+                        <option value="8.06">Tris Buffer System (pKa = 8.06)</option>
+                    </select>
+                    <input type="number" id="titrationBase" placeholder="Strong Base Equivalents Added (0.01 to 0.99)" step="0.01">
+                </div>
+                <button class="btn-glow" onclick="runBufferTitrationEngine(); trackClick('Tool 13')" style="margin-bottom: 15px;">Simulate & Plot Titration Matrix</button>
+                <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
+                    <canvas id="titrationCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+                </div>
+                <div id="titrationResultBox" class="result-box"></div>
+            </div>
+
+            <div class="tool-card">
+                <h1>⚖️ Real-Time Multi-Component Buffer Optimizer</h1>
+                <p>Tool #19: Back-calculates the explicit acid/base mass targets required to synthesize liquid buffers at a fixed target pH.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <select id="optimizeBufferType">
+                        <option value="4.76,60.05,82.03">Acetate System (Acetic Acid & Sodium Acetate)</option>
+                        <option value="8.06,157.6,121.14">Tris System (Tris-HCl Acid & Tris Base)</option>
+                    </select>
+                    <input type="number" id="optimizeTargetPH" placeholder="Desired Target pH Value (e.g., 7.80)" step="0.01">
+                    <input type="number" id="optimizeMolarity" placeholder="Desired Concentration (M)">
+                    <input type="number" id="optimizeVolume" placeholder="Desired Volume (mL)">
+                </div>
+                <button class="btn-glow" onclick="runBufferOptimizerEngine(); trackClick('Tool 19')">Optimize Formulation Recipe</button>
+                <div id="optimizerResultBox" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: LAB STATISTICS & ASSAY FORMULATIONS -->
+        <div class="section-block">
+            <div class="section-header">📁 SECTION 4: LAB STATISTICS & FORMULATIONS</div>
+            
+            <div class="tool-card">
+                <h1>📊 Statistical Experimental Outlier Tracker</h1>
+                <p>Tool #5: Evaluates manual lab data ranges using 3-Sigma parameters to catch and flag severe volumetric pipetting deviations.</p>
+                <textarea id="dataInput" placeholder="Paste dataset numbers separated by commas (e.g., 10.1, 10.2)..." oninput="logTelemetryBytes(this)"></textarea>
+                <button class="btn-glow" onclick="runStatisticalOutlierEngine(); trackClick('Tool 5')">Evaluate Dataset Array</button>
+                <div id="dataResultBox" class="result-box"></div>
+            </div>
+
+            <div class="tool-card">
+                <h1>🧬 PCR Master Mix Formulation Assistant</h1>
+                <p>Tool #11: Assembles micro-reagent quantities, automatically scaling calculations with a 10% padding cushion.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <input type="number" id="pcrTubesCount" placeholder="Total Number of Experimental Reaction Tubes">
+                </div>
+                <button class="btn-glow" onclick="runPCRMasterMixFormulator(); trackClick('Tool 11')">Formulate Bulk Batch</button>
+                <div id="pcrMixResultBox" class="result-box"></div>
+            </div>
+
+            <div class="tool-card">
+                <h1>📊 Enzyme Kinetics Michaelis-Menten Plotter</h1>
+                <p>Tool #12: Processes velocities profiles and draws hyperbolic curves across canvas displays.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <input type="number" id="enzymeVmax" placeholder="Max Velocity / Vmax (μmol/min)">
+                    <input type="number" id="enzymeKm" placeholder="Michaelis Constant / Km (mM)">
+                    <input type="number" id="enzymeSubstrate" placeholder="Substrate Load / [S] (mM)">
+                </div>
+                <button class="btn-glow" onclick="runEnzymeKineticsEngine(); trackClick('Tool 12')" style="margin-bottom: 15px;">Process & Plot Saturation Curve</button>
+                <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
+                    <canvas id="kineticsCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+                </div>
+                <div id="enzymeResultBox" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: ACADEMIC THESIS WRITING & LITERATURE SUITE -->
+        <div class="section-block">
+            <div class="section-header">📁 SECTION 5: ACADEMIC THESIS WRITING & REUSE SUITE</div>
+
+            <div class="tool-card">
+                <h1>⏱️ Focus Mode Writing Workspace & Pomodoro Timer</h1>
+                <p>Tools #20, #26, #29: Features active text backup snapshots coupled to an un-interrupted scientific deep work tracker block.</p>
+                <div style="background: #020617; padding: 12px; border-radius: 6px; border: 1px solid #1e293b; text-align: center; margin-bottom: 15px;">
+                    <span id="pomoDisplay" style="font-family: monospace; font-size: 24px; color: #00ff88; font-weight: bold;">25:00</span><br>
+                    <button class="btn-glow" onclick="togglePomodoroTimer()" style="padding: 6px 12px; font-size: 11px; margin-top: 5px;">Toggle Focus Session</button>
+                </div>
+                <textarea id="thesisDraftInput" placeholder="Compose your scientific manuscript draft elements here..." style="height: 150px;" oninput="logTelemetryBytes(this)"></textarea>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-glow" onclick="saveThesisSnapshot(); trackClick('Save Snapshot')">Commit Draft Snapshot</button>
+                    <button class="btn-glow" onclick="rollbackThesisSnapshot(); trackClick('Rollback Snapshot')" style="background:#06b6d4;">Rollback Draft</button>
+                </div>
+                <div id="thesisWriteLog" style="font-size:12px; color:#94a3b8; margin-top:8px;"></div>
+            </div>
+
+            <div class="tool-card">
+                <h1>📊 Thesis Appendix Captions & DPI Scaler Tool</h1>
+                <p>Tools #25, #27, #28: Generates mathematical figure layout strings and converts visual canvas graphs into print-ready high fidelity formats.</p>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <button class="btn-glow" style="width:50%;" onclick="generateFigureLegend(); trackClick('Tool 27')">Generate Legend Text</button>
+                    <button class="btn-glow" style="width:50%; background:#a855f7;" onclick="exportHighDPIGraph(); trackClick('Tool 28')">Export 300DPI Canvas</button>
+                </div>
+                <div id="academicResultBox" class="result-box"></div>
+            </div>
+
+            <div class="tool-card">
+                <h1>🔍 Unified Cross-Reference Search Router & Validator</h1>
+                <p>Tools #21, #22, #23, #24: Scans text for un-defined acronym metrics and executes deep link search query lookups.</p>
+                <input type="text" id="literatureSearchQuery" placeholder="Enter study topic, gene symbol, or acronym identifier..." style="width: 100%; padding: 12px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none; margin-bottom: 10px;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                    <button class="btn-glow" onclick="routeGlobalSearch('pubmed'); trackClick('PubMed Query')" style="font-size:11px; padding:8px;">Query PubMed</button>
+                    <button class="btn-glow" onclick="routeGlobalSearch('scopus'); trackClick('Scopus Query')" style="font-size:11px; padding:8px;">Query Scopus</button>
+                    <button class="btn-glow" onclick="validateAcronymsEngine(); trackClick('Tool 22')" style="font-size:11px; padding:8px; background:#eab308; color:#020617;">Validate Acronyms</button>
+                    <button class="btn-glow" onclick="parseTextToChecklist(); trackClick('Tool 24')" style="font-size:11px; padding:8px; background:#06b6d4;">Parse Method Checklist</button>
+                </div>
+                <div id="routerResultBox" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: GLOBAL INSTITUTIONAL REFERENCE PORTALS -->
+        <div class="section-block">
+            <div class="section-header">📁 SECTION 6: GLOBAL INSTITUTIONAL REFERENCE PORTALS</div>
+            <div class="tool-card" style="padding: 20px;">
+                <p style="margin-bottom:15px; font-size:12px;">Click to launch secure indexing search sessions in secondary browser windows:</p>
+                
+                <div class="cshl-link-grid">
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: PubMed')">PubMed</a>
+                    <a href="https://www.scopus.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: Scopus')">Scopus</a>
+                    <a href="https://www.webofscience.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: Web of Science')">Web of Science</a>
+                    <a href="https://hstalks.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: HSTalks')">HSTalks</a>
+                    <a href="https://www.arabidopsis.org/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: TAIR')">TAIR</a>
+                    <a href="https://www.nih.gov/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: NIH')">NIH Central</a>
+                    <a href="https://dl.acm.org/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: ACM')">ACM Library</a>
+                    <a href="https://www.girinst.org/repbase/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: Repbase')">GIRI Repbase</a>
+                    <a href="https://experiments.springernature.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: Springer Nature')">Nature Exp</a>
+                    <a href="https://iopscience.iop.org/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: IOP')">IOPscience</a>
+                    <a href="https://www.jove.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: JoVE')">JoVE Video</a>
+                    <a href="https://scite.ai/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: scite_')">scite_ AI</a>
+                    <a href="https://scifinder-n.cas.org/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: SciFinder')">SciFinderⁿ</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTRAL MANAGEMENT CONTROL MAIN PANEL -->
+        <div class="section-block">
+            <div class="section-header">📊 CENTRAL MANAGEMENT CONTROL MAIN PANEL</div>
+            
+            <div class="tool-card">
+                <h1>🌡️ Reagent Batches Shelf Life Calendar Tracker</h1>
+                <p>Monitors laboratory sample metrics. Beacons switch color parameters dynamically matching real-world deterioration metrics.</p>
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <input type="text" id="reagentName" placeholder="Batch Name (e.g., Taq Enzyme)" style="width:45%; padding:8px; background:#0b0f19; border:1px solid #1e293b; color:white; border-radius:4px; font-size:12px;">
+                    <input type="number" id="reagentDays" placeholder="Days Remaining" style="width:35%; padding:8px; background:#0b0f19; border:1px solid #1e293b; color:white; border-radius:4px; font-size:12px;">
+                    <button class="btn-glow" onclick="addReagentItem()" style="width:20%; font-size:11px; padding:0;">Log Reagent</button>
+                </div>
+                <div id="reagentInventoryContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
+            </div>
+
+            <div class="tool-card">
+                <h1>📊 Live Process Telemetry Matrix</h1>
+                <p>Real-time system processing footprint counters audited locally from current operational sessions.</p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; background:#020617; padding:12px; border-radius:6px; border:1px solid #1e293b;">
+                    <div>
+                        <span style="font-size:10px; color:#94a3b8; display:block;">INTERACTION CLICKS</span>
+                        <span id="telemetryClicks" style="font-family:monospace; font-size:18px; color:#00ff88; font-weight:bold;">0</span>
+                    </div>
+                    <div>
+                        <span style="font-size:10px; color:#94a3b8; display:block;">BYTES PROCESSED</span>
+                        <span id="telemetryBytes" style="font-family:monospace; font-size:18px; color:#06b6d4; font-weight:bold;">0 B</span>
+                    </div>
+                    <div>
+                        <span style="font-size:10px; color:#94a3b8; display:block;">CORE ENGINE STABIL</span>
+                        <span style="font-family:monospace; font-size:14px; color:#00ff88; font-weight:bold;">100% SECURE</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <h1>📜 Operational Audit Data Log Ledger</h1>
+                <p>An append-only persistent record of calculations, data parses, and search queries logged across this browser workstation node.</p>
+                <div id="logHistoryContainer" style="background:#020617; border:1px solid #1e293b; border-radius:6px; padding:12px; max-height:180px; overflow-y:auto; font-family:monospace; font-size:11px; line-height:1.4; color:#cbd5e1; display:flex; flex-direction:column; gap:6px;">
+                    <span style="color:#64748b; font-style:italic;">No calculation log records detected in local storage node container.</span>
+                </div>
+                <button class="btn-glow" onclick="clearSystemLogsMemory()" style="background:#ef4444; margin-top:12px; padding:8px 16px; font-size:11px;">Wipe Local Workstation Storage</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
