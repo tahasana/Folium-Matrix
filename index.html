@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Folium Matrix - Core Mainframe</title>
+    <title>Folium Matrix - Lab Node Mainframe</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- 🔒 THE PORTAL ENTRY GATEWAY -->
     <div id="loginGate" class="gate-card">
         <h1>FOLIUM MATRIX</h1>
         <p>SECURE LABORATORY GATEWAY</p>
@@ -19,368 +18,151 @@
         <button class="btn-glow" onclick="checkCredentials()">Initialize Portal Session</button>
     </div>
 
-    <!-- 🧬 MASTER WORKSPACE MAINFRAME -->
-    <div id="workspaceWrapper" class="workspace-wrapper" style="display: none; flex-direction: column; gap: 40px; width: 100%; max-width: 600px; padding: 40px 0;">
+    <div id="workspaceWrapper" class="workspace-wrapper" style="display: none;">
         
-        <!-- SECTION 1: GENOMICS & VECTOR ENGINEERING -->
-        <div class="section-block">
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchMainframeTab(1)">Genomics</button>
+            <button class="tab-btn" onclick="switchMainframeTab(2)">Proteomics</button>
+            <button class="tab-btn" onclick="switchMainframeTab(3)">Chemistry</button>
+            <button class="tab-btn" onclick="switchMainframeTab(4)">Assay Stats</button>
+            <button class="tab-btn" onclick="switchMainframeTab(5)">Thesis Suite</button>
+            <button class="tab-btn" onclick="switchMainframeTab(6)">Gateways</button>
+            <button class="tab-btn" onclick="switchMainframeTab(7)" style="border-color: #06b6d4; color: #06b6d4;">Data Center</button>
+        </div>
+
+        <div id="tabSection1" class="tab-section active">
             <div class="section-header">📁 SECTION 1: GENOMICS & VECTOR ENGINEERING</div>
-            
-            <div class="tool-card">
-                <h1>🧬 Macromolecular Sequence Analyzer</h1>
-                <p>Tool #1: Computes single-letter residue lengths and exact GC Content percentages from raw biological sequences.</p>
-                <textarea id="sequenceInput" placeholder="Paste your raw DNA/RNA nucleotides here (e.g., ATGCGATCG)..." oninput="logTelemetryBytes(this)"></textarea>
-                <button class="btn-glow" onclick="analyzeSequence(); trackClick('Tool 1')">Analyze Sequence</button>
-                <div id="resultBox" class="result-box"></div>
-            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h1>🧬 Macromolecular Sequence Analyzer</h1>
+                    <p>Computes single-letter residue lengths and exact GC Content percentages from raw biological sequences.</p>
+                    <textarea id="sequenceInput" placeholder="Paste your raw DNA/RNA nucleotides here..." oninput="logTelemetryBytes(this)"></textarea>
+                    <button class="btn-glow" onclick="analyzeSequence(); trackClick()">Analyze Sequence</button>
+                    <div id="resultBox" class="result-box"></div>
+                </div>
 
-            <div class="tool-card">
-                <h1>🧪 The Central Dogma Transcriptor</h1>
-                <p>Tool #2: Processes coding DNA templates, synthesizes messenger RNA loops, and decodes the functional peptide proteins.</p>
-                <textarea id="dogmaInput" placeholder="Enter coding DNA triplets separated by hyphens (e.g., ATG-GCA-GTC)..." oninput="logTelemetryBytes(this)"></textarea>
-                <button class="btn-glow" onclick="transcribeSequence(); trackClick('Tool 2')">Transcribe & Translate</button>
-                <div id="dogmaResultBox" class="result-box"></div>
-            </div>
+                <div class="tool-card">
+                    <h1>🧪 The Central Dogma Transcriptor</h1>
+                    <p>Processes coding DNA templates, synthesizes messenger RNA loops, and decodes functional proteins.</p>
+                    <textarea id="dogmaInput" placeholder="Enter coding DNA triplets separated by hyphens (e.g., ATG-GCA-GTC)..." oninput="logTelemetryBytes(this)"></textarea>
+                    <button class="btn-glow" onclick="transcribeSequence(); trackClick()">Transcribe & Translate</button>
+                    <div id="dogmaResultBox" class="result-box"></div>
+                </div>
 
-            <div class="tool-card">
-                <h1>✂️ Palindromic Restriction Enzyme Mapper</h1>
-                <p>Tool #14: Simulates restriction digestion fragmentation pipelines against standard biochemical enzyme motifs.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <select id="enzymeRestrictionSelect">
+                <div class="tool-card">
+                    <h1>✂️ Palindromic Restriction Enzyme Mapper</h1>
+                    <p>Simulates restriction digestion fragmentation pipelines against standard biochemical enzyme motifs.</p>
+                    <select id="enzymeRestrictionSelect" style="margin-bottom:10px;">
                         <option value="GAATTC">EcoRI (Motif: G^AATTC)</option>
                         <option value="AAGCTT">HindIII (Motif: A^AGCTT)</option>
                         <option value="GGATCC">BamHI (Motif: G^GATCC)</option>
                     </select>
                     <textarea id="restrictionDnaInput" placeholder="Paste raw DNA characters here..." oninput="logTelemetryBytes(this)"></textarea>
+                    <button class="btn-glow" onclick="runRestrictionMapperEngine(); trackClick()">Run Restriction Digest</button>
+                    <div id="restrictionResultBox" class="result-box"></div>
                 </div>
-                <button class="btn-glow" onclick="runRestrictionMapperEngine(); trackClick('Tool 14')">Run Restriction Mapping Digest</button>
-                <div id="restrictionResultBox" class="result-box"></div>
-            </div>
 
-            <div class="tool-card">
-                <h1>⭕ Circular Plasmid Vector Map Canvas Drawer</h1>
-                <p>Tool #17: Uses trigonometric vector paths to render interactive cloning plasmid feature rings dynamically.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <input type="number" id="plasmidSize" value="4361" placeholder="Plasmid Base Pair Length (bp)">
+                <div class="tool-card">
+                    <h1>⭕ Circular Plasmid Vector Map Canvas Drawer</h1>
+                    <p>Uses trigonometric vector paths to render interactive cloning plasmid feature rings dynamically.</p>
+                    <input type="number" id="plasmidSize" value="4361" placeholder="Plasmid Base Pair Length (bp)" style="width:100%; padding:10px; background:#0b0f19; border:2px solid #1e293b; border-radius:6px; color:white; margin-bottom:15px; outline:none;">
+                    <button class="btn-glow" onclick="runPlasmidDrawerEngine(); trackClick()" style="margin-bottom: 15px;">Map Plasmid Ring</button>
+                    <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
+                        <canvas id="plasmidCanvas" width="260" height="260" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+                    </div>
                 </div>
-                <button class="btn-glow" onclick="runPlasmidDrawerEngine(); trackClick('Tool 17')" style="margin-bottom: 15px;">Map Plasmid Vector Ring</button>
-                <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
-                    <canvas id="plasmidCanvas" width="300" height="300" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
-                </div>
-            </div>
 
-            <div class="tool-card">
-                <h1>🗺️ Local Pairwise Sequence Alignment Mismatch Viewer</h1>
-                <p>Tool #18: Compares mutation alignments between a wild-type sequence and a target variant clone.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" id="alignSeqA" placeholder="Wild-Type Reference String..." style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none; font-family: monospace;">
-                    <input type="text" id="alignSeqB" placeholder="Variant Sample Target String..." style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none; font-family: monospace;">
+                <div class="tool-card">
+                    <h1>🗺️ Local Pairwise Sequence Alignment Mismatch Viewer</h1>
+                    <p>Compares mutation alignments between a wild-type sequence and a target variant clone.</p>
+                    <input type="text" id="alignSeqA" placeholder="Wild-Type Reference String..." style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none; font-family: monospace; margin-bottom: 10px;">
+                    <input type="text" id="alignSeqB" placeholder="Variant Sample Target String..." style="width: 100%; padding: 10px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none; font-family: monospace; margin-bottom: 15px;">
+                    <button class="btn-glow" onclick="runPairwiseAlignmentEngine(); trackClick()">Execute Pairwise Sync</button>
+                    <div id="alignmentResultBox" class="result-box"></div>
                 </div>
-                <button class="btn-glow" onclick="runPairwiseAlignmentEngine(); trackClick('Tool 18')">Execute Pairwise Sync</button>
-                <div id="alignmentResultBox" class="result-box"></div>
             </div>
         </div>
 
-        <!-- SECTION 2: PROTEOMICS & BIOPHYSICS -->
-        <div class="section-block">
+        <div id="tabSection2" class="tab-section">
             <div class="section-header">📁 SECTION 2: PROTEOMICS & BIOPHYSICS</div>
-            
-            <div class="tool-card">
-                <h1>🔬 Amino Acid Structural Profile Finder</h1>
-                <p>Tool #3: Pulls sidechain classifications, accurate isotopic masses, and specific Isoelectric Point parameters.</p>
-                <select id="aaSelect" onchange="runAminoAcidLookup(); trackClick('Tool 3')">
-                    <option value="">-- Choose Target Residue --</option>
-                    <option value="A">Alanine (Ala / A) - Aliphatic Nonpolar</option>
-                    <option value="R">Arginine (Arg / R) - Positively Charged Basic</option>
-                    <option value="C">Cysteine (Cys / C) - Reactive Thiol Hydrophilic</option>
-                    <option value="D">Aspartic Acid (Asp / D) - Negatively Charged Acidic</option>
-                    <option value="G">Glycine (Gly / G) - Flexible Achiral Structure</option>
-                    <option value="H">Histidine (His / H) - Aromatic Imidazole Ring</option>
-                    <option value="K">Lysine (Lys / K) - Basic Amino Sidechain</option>
-                    <option value="W">Tryptophan (Trp / W) - Indole Fluorescent Aromatic</option>
-                </select>
-                <div id="aaResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>🤖 Heuristic AI Peptide Property Predictor</h1>
-                <p>Tool #6: Deploys local metrics to forecast sequence solubility fluidity patterns and recommend optimal purification routing lines.</p>
-                <textarea id="aiPeptideInput" placeholder="Enter single-letter amino acid sequence tags (e.g., RGDWFLM)..." oninput="logTelemetryBytes(this)"></textarea>
-                <button class="btn-glow" onclick="runAIPredictorEngine(); trackClick('Tool 6')">Run AI Property Forecast</button>
-                <div id="aiResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>✂️ Trypsin Digestion & Mass Spectrometry Simulator</h1>
-                <p>Tool #15: Simulates proteolytic peptide cleavage maps across Lysine (K) and Arginine (R) junctions.</p>
-                <textarea id="trypsinProteinInput" placeholder="Paste single-letter protein FASTA sequence here..." oninput="logTelemetryBytes(this)"></textarea>
-                <button class="btn-glow" onclick="runTrypsinDigestEngine(); trackClick('Tool 15')">Execute Proteolytic Digestion</button>
-                <div id="trypsinResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>⚡ Peptide Charge Gradient Curve Plotter</h1>
-                <p>Tool #16: Tracks net molecular electrical charge variations across environmental pH spectra.</p>
-                <textarea id="chargePeptideInput" placeholder="Enter single-letter protein sequence (e.g., KKHEDRCE)..." oninput="logTelemetryBytes(this)"></textarea>
-                <button class="btn-glow" onclick="runChargePlotterEngine(); trackClick('Tool 16')" style="margin-bottom: 15px;">Map Charge Gradient Graph</button>
-                <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
-                    <canvas id="chargeCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h1>🔬 Amino Acid Structural Profile Finder</h1>
+                    <p>Pulls sidechain classifications, accurate isotopic masses, and specific Isoelectric Point parameters.</p>
+                    <select id="aaSelect" onchange="runAminoAcidLookup(); trackClick()">
+                        <option value="">-- Choose Target Residue --</option>
+                        <option value="A">Alanine (Ala / A) - Aliphatic Nonpolar</option>
+                        <option value="R">Arginine (Arg / R) - Positively Charged Basic</option>
+                        <option value="C">Cysteine (Cys / C) - Reactive Thiol Hydrophilic</option>
+                        <option value="D">Aspartic Acid (Asp / D) - Negatively Charged Acidic</option>
+                        <option value="G">Glycine (Gly / G) - Flexible Achiral Structure</option>
+                        <option value="H">Histidine (His / H) - Aromatic Imidazole Ring</option>
+                        <option value="K">Lysine (Lys / K) - Basic Amino Sidechain</option>
+                        <option value="W">Tryptophan (Trp / W) - Indole Fluorescent Aromatic</option>
+                    </select>
+                    <div id="aaResultBox" class="result-box"></div>
                 </div>
-                <div id="chargeResultBox" class="result-box"></div>
+
+                <div class="tool-card">
+                    <h1>🤖 Heuristic AI Peptide Property Predictor</h1>
+                    <p>Deploys local metrics to forecast sequence solubility fluidity patterns and recommend optimal purification routing lines.</p>
+                    <textarea id="aiPeptideInput" placeholder="Enter single-letter amino acid sequence tags..." oninput="logTelemetryBytes(this)"></textarea>
+                    <button class="btn-glow" onclick="runAIPredictorEngine(); trackClick()">Run AI Property Forecast</button>
+                    <div id="aiResultBox" class="result-box"></div>
+                </div>
+
+                <div class="tool-card">
+                    <h1>✂️ Trypsin Digestion & Mass Spectrometry Simulator</h1>
+                    <p>Simulates proteolytic peptide cleavage maps across Lysine (K) and Arginine (R) junctions to calculate fragment fingerprints.</p>
+                    <textarea id="trypsinProteinInput" placeholder="Paste single-letter protein FASTA sequence here..." oninput="logTelemetryBytes(this)"></textarea>
+                    <button class="btn-glow" onclick="runTrypsinDigestEngine(); trackClick()">Execute Proteolytic Digestion</button>
+                    <div id="trypsinResultBox" class="result-box"></div>
+                </div>
+
+                <div class="tool-card">
+                    <h1>⚡ Peptide Charge Gradient Curve Plotter</h1>
+                    <p>Tracks net molecular electrical charge variations across environmental pH spectra to pinpoint the Isoelectric Point (pI).</p>
+                    <textarea id="chargePeptideInput" placeholder="Enter single-letter protein sequence (e.g., KKHEDRCE)..." oninput="logTelemetryBytes(this)"></textarea>
+                    <button class="btn-glow" onclick="runChargePlotterEngine(); trackClick()" style="margin-bottom: 15px;">Map Charge Gradient Graph</button>
+                    <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
+                        <canvas id="chargeCanvas" width="260" height="130" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
+                    </div>
+                    <div id="chargeResultBox" class="result-box"></div>
+                </div>
             </div>
         </div>
 
-        <!-- SECTION 3: WET LAB ANALYTICAL CHEMISTRY -->
-        <div class="section-block">
+        <div id="tabSection3" class="tab-section">
             <div class="section-header">📁 SECTION 3: WET LAB ANALYTICAL CHEMISTRY</div>
-            
-            <div class="tool-card">
-                <h1>⚛️ Bio-Element Organic Reference Matrix</h1>
-                <p>Tool #4: Loads standard covalent bonding enthalpies, valence clouds, and atomic properties.</p>
-                <select id="elementSelect" onchange="runElementLookup(); trackClick('Tool 4')">
-                    <option value="">-- Choose Target Core Atom --</option>
-                    <option value="C">Carbon (C) - Organic Infrastructure Node</option>
-                    <option value="H">Hydrogen (H) - Solution Matrix Proton</option>
-                    <option value="N">Nitrogen (N) - Peptidyl Planar Amide Link</option>
-                    <option value="O">Oxygen (O) - Hydrogen Bond Dipole Acceptor</option>
-                    <option value="P">Phosphorus (P) - Phosphoanhydride Bridge</option>
-                </select>
-                <div id="elementResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>🧪 Solid Solution Molarity Calculator</h1>
-                <p>Tool #7: Computes the precise weight mass in grams required to synthesize dry reagents into liquid target concentrations.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <input type="number" id="molInputMW" placeholder="Formula / Molecular Weight (g/mol)">
-                    <input type="number" id="molInputMolarity" placeholder="Target Molarity (M)">
-                    <input type="number" id="molInputVolume" placeholder="Target Volume (mL)">
-                </div>
-                <button class="btn-glow" onclick="runMolarityCalculator(); trackClick('Tool 7')">Compute Target Mass</button>
-                <div id="molarityResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>📉 Beer-Lambert Concentration Finder</h1>
-                <p>Tool #8: Traces overall chemical molar concentrations by resolving total optical absorbance profiles.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <input type="number" id="beerAbsorbance" placeholder="Absorbance Scale Value (A)" step="any">
-                    <input type="number" id="beerExtinction" placeholder="Extinction Coefficient (M⁻¹cm⁻¹)">
-                    <input type="number" id="beerPathLength" value="1">
-                </div>
-                <button class="btn-glow" onclick="runBeerLambertCalculator(); trackClick('Tool 8')">Compute Concentration</button>
-                <div id="beerResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>🔬 Nucleic Acid Purity Inspector (A₂₆₀/A₂₈₀)</h1>
-                <p>Tool #9: Evaluates sample isolation quality controls via optical quotient thresholds.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <input type="number" id="purityA260" placeholder="Absorbance value at 260 nm (A₂₆₀)" step="any">
-                    <input type="number" id="purityA280" placeholder="Absorbance value at 280 nm (A₂₈₀)" step="any">
-                </div>
-                <button class="btn-glow" onclick="runPurityRatioInspector(); trackClick('Tool 9')">Inspect Sample Extract</button>
-                <div id="purityResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>💦 Stock Concentrate Serial Dilution Engine</h1>
-                <p>Tool #10: Computes stock solute allocations and required solvent diluent mixing ratios using C₁V₁ = C₂V₂ parameters.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <input type="number" id="dilutionC1" placeholder="Concentration of Initial Stock (C1)">
-                    <input type="number" id="dilutionC2" placeholder="Target Working Concentration (C2)">
-                    <input type="number" id="dilutionV2" placeholder="Target Working Final Volume (V2) (mL)">
-                </div>
-                <button class="btn-glow" onclick="runDilutionEquation(); trackClick('Tool 10')">Compute Volumetric Mix</button>
-                <div id="dilutionResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>🧪 Buffer Titration Curve Simulator</h1>
-                <p>Tool #13: Simulates pH shifting dynamics during titration profiles and renders weak acid equilibrium lines.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <select id="titrationBuffer">
-                        <option value="4.76">Acetate Buffer System (pKa = 4.76)</option>
-                        <option value="7.20">Phosphate Buffer System (pKa = 7.20)</option>
-                        <option value="8.06">Tris Buffer System (pKa = 8.06)</option>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h1>⚛️ Bio-Element Organic Reference Matrix</h1>
+                    <p>Loads standard covalent bonding enthalpies, valence clouds, and atomic properties of vital organic atoms.</p>
+                    <select id="elementSelect" onchange="runElementLookup(); trackClick()">
+                        <option value="">-- Choose Target Core Atom --</option>
+                        <option value="C">Carbon (C) - Organic Infrastructure Node</option>
+                        <option value="H">Hydrogen (H) - Solution Matrix Proton</option>
+                        <option value="N">Nitrogen (N) - Peptidyl Planar Amide Link</option>
+                        <option value="O">Oxygen (O) - Hydrogen Bond Dipole Acceptor</option>
+                        <option value="P">Phosphorus (P) - Phosphoanhydride Bridge</option>
                     </select>
-                    <input type="number" id="titrationBase" placeholder="Strong Base Equivalents Added (0.01 to 0.99)" step="0.01">
+                    <div id="elementResultBox" class="result-box"></div>
                 </div>
-                <button class="btn-glow" onclick="runBufferTitrationEngine(); trackClick('Tool 13')" style="margin-bottom: 15px;">Simulate & Plot Titration Matrix</button>
-                <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
-                    <canvas id="titrationCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
-                </div>
-                <div id="titrationResultBox" class="result-box"></div>
-            </div>
 
-            <div class="tool-card">
-                <h1>⚖️ Real-Time Multi-Component Buffer Optimizer</h1>
-                <p>Tool #19: Back-calculates the explicit acid/base mass targets required to synthesize liquid buffers at a fixed target pH.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <select id="optimizeBufferType">
-                        <option value="4.76,60.05,82.03">Acetate System (Acetic Acid & Sodium Acetate)</option>
-                        <option value="8.06,157.6,121.14">Tris System (Tris-HCl Acid & Tris Base)</option>
-                    </select>
-                    <input type="number" id="optimizeTargetPH" placeholder="Desired Target pH Value (e.g., 7.80)" step="0.01">
-                    <input type="number" id="optimizeMolarity" placeholder="Desired Concentration (M)">
-                    <input type="number" id="optimizeVolume" placeholder="Desired Volume (mL)">
-                </div>
-                <button class="btn-glow" onclick="runBufferOptimizerEngine(); trackClick('Tool 19')">Optimize Formulation Recipe</button>
-                <div id="optimizerResultBox" class="result-box"></div>
-            </div>
-        </div>
-
-        <!-- SECTION 4: LAB STATISTICS & ASSAY FORMULATIONS -->
-        <div class="section-block">
-            <div class="section-header">📁 SECTION 4: LAB STATISTICS & FORMULATIONS</div>
-            
-            <div class="tool-card">
-                <h1>📊 Statistical Experimental Outlier Tracker</h1>
-                <p>Tool #5: Evaluates manual lab data ranges using 3-Sigma parameters to catch and flag severe volumetric pipetting deviations.</p>
-                <textarea id="dataInput" placeholder="Paste dataset numbers separated by commas (e.g., 10.1, 10.2)..." oninput="logTelemetryBytes(this)"></textarea>
-                <button class="btn-glow" onclick="runStatisticalOutlierEngine(); trackClick('Tool 5')">Evaluate Dataset Array</button>
-                <div id="dataResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>🧬 PCR Master Mix Formulation Assistant</h1>
-                <p>Tool #11: Assembles micro-reagent quantities, automatically scaling calculations with a 10% padding cushion.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <input type="number" id="pcrTubesCount" placeholder="Total Number of Experimental Reaction Tubes">
-                </div>
-                <button class="btn-glow" onclick="runPCRMasterMixFormulator(); trackClick('Tool 11')">Formulate Bulk Batch</button>
-                <div id="pcrMixResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>📊 Enzyme Kinetics Michaelis-Menten Plotter</h1>
-                <p>Tool #12: Processes velocities profiles and draws hyperbolic curves across canvas displays.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                    <input type="number" id="enzymeVmax" placeholder="Max Velocity / Vmax (μmol/min)">
-                    <input type="number" id="enzymeKm" placeholder="Michaelis Constant / Km (mM)">
-                    <input type="number" id="enzymeSubstrate" placeholder="Substrate Load / [S] (mM)">
-                </div>
-                <button class="btn-glow" onclick="runEnzymeKineticsEngine(); trackClick('Tool 12')" style="margin-bottom: 15px;">Process & Plot Saturation Curve</button>
-                <div style="background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; text-align: center;">
-                    <canvas id="kineticsCanvas" width="300" height="150" style="background: #0b0f19; border: 1px solid #1e293b; border-radius: 4px; max-width: 100%;"></canvas>
-                </div>
-                <div id="enzymeResultBox" class="result-box"></div>
-            </div>
-        </div>
-
-        <!-- SECTION 5: ACADEMIC THESIS WRITING & LITERATURE SUITE -->
-        <div class="section-block">
-            <div class="section-header">📁 SECTION 5: ACADEMIC THESIS WRITING & REUSE SUITE</div>
-
-            <div class="tool-card">
-                <h1>⏱️ Focus Mode Writing Workspace & Pomodoro Timer</h1>
-                <p>Tools #20, #26, #29: Features active text backup snapshots coupled to an un-interrupted scientific deep work tracker block.</p>
-                <div style="background: #020617; padding: 12px; border-radius: 6px; border: 1px solid #1e293b; text-align: center; margin-bottom: 15px;">
-                    <span id="pomoDisplay" style="font-family: monospace; font-size: 24px; color: #00ff88; font-weight: bold;">25:00</span><br>
-                    <button class="btn-glow" onclick="togglePomodoroTimer()" style="padding: 6px 12px; font-size: 11px; margin-top: 5px;">Toggle Focus Session</button>
-                </div>
-                <textarea id="thesisDraftInput" placeholder="Compose your scientific manuscript draft elements here..." style="height: 150px;" oninput="logTelemetryBytes(this)"></textarea>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-glow" onclick="saveThesisSnapshot(); trackClick('Save Snapshot')">Commit Draft Snapshot</button>
-                    <button class="btn-glow" onclick="rollbackThesisSnapshot(); trackClick('Rollback Snapshot')" style="background:#06b6d4;">Rollback Draft</button>
-                </div>
-                <div id="thesisWriteLog" style="font-size:12px; color:#94a3b8; margin-top:8px;"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>📊 Thesis Appendix Captions & DPI Scaler Tool</h1>
-                <p>Tools #25, #27, #28: Generates mathematical figure layout strings and converts visual canvas graphs into print-ready high fidelity formats.</p>
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <button class="btn-glow" style="width:50%;" onclick="generateFigureLegend(); trackClick('Tool 27')">Generate Legend Text</button>
-                    <button class="btn-glow" style="width:50%; background:#a855f7;" onclick="exportHighDPIGraph(); trackClick('Tool 28')">Export 300DPI Canvas</button>
-                </div>
-                <div id="academicResultBox" class="result-box"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>🔍 Unified Cross-Reference Search Router & Validator</h1>
-                <p>Tools #21, #22, #23, #24: Scans text for un-defined acronym metrics and executes deep link search query lookups.</p>
-                <input type="text" id="literatureSearchQuery" placeholder="Enter study topic, gene symbol, or acronym identifier..." style="width: 100%; padding: 12px; background: #0b0f19; border: 2px solid #1e293b; border-radius: 6px; color: white; outline: none; margin-bottom: 10px;">
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
-                    <button class="btn-glow" onclick="routeGlobalSearch('pubmed'); trackClick('PubMed Query')" style="font-size:11px; padding:8px;">Query PubMed</button>
-                    <button class="btn-glow" onclick="routeGlobalSearch('scopus'); trackClick('Scopus Query')" style="font-size:11px; padding:8px;">Query Scopus</button>
-                    <button class="btn-glow" onclick="validateAcronymsEngine(); trackClick('Tool 22')" style="font-size:11px; padding:8px; background:#eab308; color:#020617;">Validate Acronyms</button>
-                    <button class="btn-glow" onclick="parseTextToChecklist(); trackClick('Tool 24')" style="font-size:11px; padding:8px; background:#06b6d4;">Parse Method Checklist</button>
-                </div>
-                <div id="routerResultBox" class="result-box"></div>
-            </div>
-        </div>
-
-        <!-- SECTION 6: GLOBAL INSTITUTIONAL REFERENCE PORTALS -->
-        <div class="section-block">
-            <div class="section-header">📁 SECTION 6: GLOBAL INSTITUTIONAL REFERENCE PORTALS</div>
-            <div class="tool-card" style="padding: 20px;">
-                <p style="margin-bottom:15px; font-size:12px;">Click to launch secure indexing search sessions in secondary browser windows:</p>
-                
-                <div class="cshl-link-grid">
-                    <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: PubMed')">PubMed</a>
-                    <a href="https://www.scopus.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: Scopus')">Scopus</a>
-                    <a href="https://www.webofscience.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: Web of Science')">Web of Science</a>
-                    <a href="https://hstalks.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: HSTalks')">HSTalks</a>
-                    <a href="https://www.arabidopsis.org/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: TAIR')">TAIR</a>
-                    <a href="https://www.nih.gov/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: NIH')">NIH Central</a>
-                    <a href="https://dl.acm.org/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: ACM')">ACM Library</a>
-                    <a href="https://www.girinst.org/repbase/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: Repbase')">GIRI Repbase</a>
-                    <a href="https://experiments.springernature.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: Springer Nature')">Nature Exp</a>
-                    <a href="https://iopscience.iop.org/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: IOP')">IOPscience</a>
-                    <a href="https://www.jove.com/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: JoVE')">JoVE Video</a>
-                    <a href="https://scite.ai/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: scite_')">scite_ AI</a>
-                    <a href="https://scifinder-n.cas.org/" target="_blank" class="cshl-node" onclick="trackClick('Portal Link: SciFinder')">SciFinderⁿ</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- CENTRAL MANAGEMENT CONTROL MAIN PANEL -->
-        <div class="section-block">
-            <div class="section-header">📊 CENTRAL MANAGEMENT CONTROL MAIN PANEL</div>
-            
-            <div class="tool-card">
-                <h1>🌡️ Reagent Batches Shelf Life Calendar Tracker</h1>
-                <p>Monitors laboratory sample metrics. Beacons switch color parameters dynamically matching real-world deterioration metrics.</p>
-                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                    <input type="text" id="reagentName" placeholder="Batch Name (e.g., Taq Enzyme)" style="width:45%; padding:8px; background:#0b0f19; border:1px solid #1e293b; color:white; border-radius:4px; font-size:12px;">
-                    <input type="number" id="reagentDays" placeholder="Days Remaining" style="width:35%; padding:8px; background:#0b0f19; border:1px solid #1e293b; color:white; border-radius:4px; font-size:12px;">
-                    <button class="btn-glow" onclick="addReagentItem()" style="width:20%; font-size:11px; padding:0;">Log Reagent</button>
-                </div>
-                <div id="reagentInventoryContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
-            </div>
-
-            <div class="tool-card">
-                <h1>📊 Live Process Telemetry Matrix</h1>
-                <p>Real-time system processing footprint counters audited locally from current operational sessions.</p>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; background:#020617; padding:12px; border-radius:6px; border:1px solid #1e293b;">
-                    <div>
-                        <span style="font-size:10px; color:#94a3b8; display:block;">INTERACTION CLICKS</span>
-                        <span id="telemetryClicks" style="font-family:monospace; font-size:18px; color:#00ff88; font-weight:bold;">0</span>
+                <div class="tool-card">
+                    <h1>🧪 Solid Solution Molarity Calculator</h1>
+                    <p>Computes the precise weight mass in grams required to synthesize dry reagents into liquid target concentrations.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                        <input type="number" id="molInputMW" placeholder="Formula / Molecular Weight (g/mol)">
+                        <input type="number" id="molInputMolarity" placeholder="Target Molarity (M)">
+                        <input type="number" id="molInputVolume" placeholder="Target Volume (mL)">
                     </div>
-                    <div>
-                        <span style="font-size:10px; color:#94a3b8; display:block;">BYTES PROCESSED</span>
-                        <span id="telemetryBytes" style="font-family:monospace; font-size:18px; color:#06b6d4; font-weight:bold;">0 B</span>
-                    </div>
-                    <div>
-                        <span style="font-size:10px; color:#94a3b8; display:block;">CORE ENGINE STABIL</span>
-                        <span style="font-family:monospace; font-size:14px; color:#00ff88; font-weight:bold;">100% SECURE</span>
-                    </div>
+                    <button class="btn-glow" onclick="runMolarityCalculator(); trackClick()">Compute Target Mass</button>
+                    <div id="molarityResultBox" class="result-box"></div>
                 </div>
-            </div>
 
-            <div class="tool-card">
-                <h1>📜 Operational Audit Data Log Ledger</h1>
-                <p>An append-only persistent record of calculations, data parses, and search queries logged across this browser workstation node.</p>
-                <div id="logHistoryContainer" style="background:#020617; border:1px solid #1e293b; border-radius:6px; padding:12px; max-height:180px; overflow-y:auto; font-family:monospace; font-size:11px; line-height:1.4; color:#cbd5e1; display:flex; flex-direction:column; gap:6px;">
-                    <span style="color:#64748b; font-style:italic;">No calculation log records detected in local storage node container.</span>
-                </div>
-                <button class="btn-glow" onclick="clearSystemLogsMemory()" style="background:#ef4444; margin-top:12px; padding:8px 16px; font-size:11px;">Wipe Local Workstation Storage</button>
-            </div>
-        </div>
-
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+                <div class="tool-card">
+                    <h1>📉 Beer-Lambert Concentration Finder</h1>
+                    <p>Traces overall chemical molar concentrations by resolving total optical absorbance profiles.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                        <input type="number" id="beer
