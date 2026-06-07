@@ -18,56 +18,100 @@ body {
     padding: 20px;
 }
 
+/* 🔒 Secure Gateway Card Panel */
+.gate-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-matrix);
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 255, 136, 0.03);
+}
+.gate-card h1 { font-size: 28px; color: var(--accent-glow); margin-bottom: 4px; letter-spacing: 1px; }
+.gate-card p { color: #94a3b8; font-size: 11px; margin-bottom: 25px; letter-spacing: 2px; }
+.gate-card input { 
+    width: 100%; padding: 12px; background: var(--bg-canvas); 
+    border: 2px solid var(--border-matrix); border-radius: 6px; 
+    color: white; outline: none; font-size: 14px;
+}
+.gate-card input:focus { border-color: var(--accent-glow); }
+
+/* Workspace Folder Components */
+.section-block {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    border-top: 1px dashed #1e293b;
+    padding-top: 20px;
+}
+.section-header {
+    font-size: 11px;
+    font-weight: bold;
+    color: #06b6d4;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    background: #020617;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #1e293b;
+    width: fit-content;
+}
+
 .tool-card {
     background: var(--card-bg); 
     border: 2px solid var(--border-matrix); 
     border-radius: 12px;
     padding: 30px; 
-    width: 100%; 
-    max-width: 600px;
-    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.02);
-}
-h1 { color: var(--accent-glow); margin-bottom: 6px; font-size: 24px; }
-p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
-
-textarea {
     width: 100%;
-    height: 120px;
-    padding: 12px;
-    background: var(--bg-canvas);
-    border: 2px solid var(--border-matrix);
-    border-radius: 6px;
-    color: white;
-    font-family: monospace;
-    font-size: 14px;
-    outline: none;
-    resize: none;
-    margin-bottom: 15px;
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.01);
 }
-textarea:focus { border-color: var(--accent-glow); }
+.tool-card h1 { color: var(--accent-glow); margin-bottom: 6px; font-size: 18px; }
+.tool-card p { color: #94a3b8; font-size: 12px; margin-bottom: 18px; }
+
+textarea, select {
+    width: 100%; height: 80px; padding: 12px; background: var(--bg-canvas);
+    border: 2px solid var(--border-matrix); border-radius: 6px;
+    color: white; font-family: monospace; font-size: 13px; outline: none; resize: none; margin-bottom: 15px;
+}
+select { height: 44px; font-family: 'Segoe UI', sans-serif; }
+textarea:focus, select:focus { border-color: var(--accent-glow); }
 
 .btn-glow {
-    padding: 12px 24px;
-    background: var(--accent-glow);
-    color: #020617;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
+    padding: 12px 24px; background: var(--accent-glow); color: #020617;
+    border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;
 }
 .btn-glow:hover { background: #00cc6c; }
 
 .result-box {
-    margin-top: 20px;
-    padding: 15px;
-    background: var(--bg-canvas);
-    border: 1px solid var(--border-matrix);
-    border-left: 4px solid var(--accent-glow);
+    margin-top: 20px; padding: 15px; background: var(--bg-canvas);
+    border: 1px solid var(--border-matrix); border-left: 4px solid var(--accent-glow);
+    border-radius: 4px; font-family: monospace; font-size: 13px; display: none; line-height: 1.6;
+}
+
+/* 🌐 Clickable Reference Matrix Grid */
+.cshl-link-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+}
+.cshl-node {
+    background: #020617;
+    border: 1px solid #1e293b;
     border-radius: 4px;
-    font-family: monospace;
-    font-size: 14px;
-    display: none;
-    line-height: 1.6;
+    padding: 12px 6px;
+    text-align: center;
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.cshl-node:hover {
+    border-color: #06b6d4;
+    color: #00ff88;
+    background: #0b0f19;
 }
